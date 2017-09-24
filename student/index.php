@@ -5,10 +5,7 @@ if(isset($_POST['submitted']))
 {
    if($handler->RegisterStudent())
    {
-        echo "Thanks for Registering ". $_POST['name'];
-        echo "<form action='../'method='post'>
-        <input type='submit' name='Home' value='Home' />
-        </form>";
+        $handler->RedirectToURL("success.html");
    }
 }
 
@@ -30,11 +27,13 @@ if(isset($_POST['submitted']))
     <div id='fg_membersite'>
     <form id='register' action='' method='post' accept-charset='UTF-8'>
     <fieldset >
-    <legend>Register</legend>
+    <h2> 
+      <legend>Register</legend>
+    </h2>
 
     <input type='hidden' name='submitted' id='submitted' value='1'/>
 
-    <div class='short_explanation'>* Required </div>
+    <div class='short_explanation'>*required fields </div>
 
     <div><span class='error'><?php echo $handler->GetErrorMessage(); ?></span></div>
     <div class='container'>

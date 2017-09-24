@@ -225,7 +225,7 @@ class FormValidator
 
 	function test_datatype($input_value,$reg_exp)
 	{
-		if(ereg($reg_exp,$input_value))
+		if(preg_match($reg_exp,$input_value))
 		{
 			return false;
 		}

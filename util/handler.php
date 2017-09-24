@@ -148,209 +148,7 @@ class FairHandler
         }      
         return true;
     }
-    
-    function ResetUserPasswordInDB($user_rec)
-    {
-        $new_password = substr(md5(uniqid()),0,10);
         
-        if(false == $this->ChangePasswordInDB($user_rec,$new_password))
-        {
-            return false;
-        }
-        return $new_password;
-    }
-    
-    function ChangePasswordInDB($user_rec, $newpwd)
-    {
-        $newpwd = $this->SanitizeForSQL($newpwd);
-        
-        $qry = "Update $this->tablename Set password='".md5($newpwd)."' Where  id_user=".$user_rec['id_user']."";
-        
-        if(!mysql_query( $qry ,$this->connection))
-        {
-            $this->HandleDBError("Error updating the password \nquery:$qry");
-            return false;
-        }     
-        return true;
-    }
-    
-    function GetUserFromEmail($email,&$user_rec)
-    {
-        if(!$this->DBLogin())
-        {
-            $this->HandleError("Database login failed!");
-            return false;
-        }   
-        $email = $this->SanitizeForSQL($email);
-        
-        $result = mysql_query("Select * from $this->tablename where email='$email'",$this->connection);  
-
-        if(!$result || mysql_num_rows($result) <= 0)
-        {
-            $this->HandleError("There is no user with email: $email");
-            return false;
-        }
-        $user_rec = mysql_fetch_assoc($result);
-
-        
-        return true;
-    }
-    
-    function SendUserWelcomeEmail(&$user_rec)
-    {
-        $mailer = new PHPMailer();
-        
-        $mailer->CharSet = 'utf-8';
-        
-        $mailer->AddAddress($user_rec['email'],$user_rec['name']);
-        
-        $mailer->Subject = "Welcome to ".$this->sitename;
-
-        $mailer->From = $this->GetFromAddress();        
-        
-        $mailer->Body ="Hello ".$user_rec['name']."\r\n\r\n".
-        "Welcome! Your registration  with ".$this->sitename." is completed.\r\n".
-        "\r\n".
-        "Regards,\r\n".
-        "Webmaster\r\n".
-        $this->sitename;
-
-        if(!$mailer->Send())
-        {
-            $this->HandleError("Failed sending user welcome email.");
-            return false;
-        }
-        return true;
-    }
-    
-    function SendAdminIntimationOnRegComplete(&$user_rec)
-    {
-        if(empty($this->admin_email))
-        {
-            return false;
-        }
-        $mailer = new PHPMailer();
-        
-        $mailer->CharSet = 'utf-8';
-        
-        $mailer->AddAddress($this->admin_email);
-        
-        $mailer->Subject = "Registration Completed: ".$user_rec['name'];
-
-        $mailer->From = $this->GetFromAddress();         
-        
-        $mailer->Body ="A new user registered at ".$this->sitename."\r\n".
-        "Name: ".$user_rec['name']."\r\n".
-        "Email address: ".$user_rec['email']."\r\n";
-        
-        if(!$mailer->Send())
-        {
-            return false;
-        }
-        return true;
-    }
-    
-    function GetResetPasswordCode($email)
-    {
-       return substr(md5($email.$this->sitename.$this->rand_key),0,10);
-    }
-    
-    function SendResetPasswordLink($user_rec)
-    {
-        $email = $user_rec['email'];
-        
-        $mailer = new PHPMailer();
-        
-        $mailer->CharSet = 'utf-8';
-        
-        $mailer->AddAddress($email,$user_rec['name']);
-        
-        $mailer->Subject = "Your reset password request at ".$this->sitename;
-
-        $mailer->From = $this->GetFromAddress();
-        
-        $link = $this->GetAbsoluteURLFolder().
-                '/resetpwd.php?email='.
-                urlencode($email).'&code='.
-                urlencode($this->GetResetPasswordCode($email));
-
-        $mailer->Body ="Hello ".$user_rec['name']."\r\n\r\n".
-        "There was a request to reset your password at ".$this->sitename."\r\n".
-        "Please click the link below to complete the request: \r\n".$link."\r\n".
-        "Regards,\r\n".
-        "Webmaster\r\n".
-        $this->sitename;
-        
-        if(!$mailer->Send())
-        {
-            return false;
-        }
-        return true;
-    }
-    
-    function SendNewPassword($user_rec, $new_password)
-    {
-        $email = $user_rec['email'];
-        
-        $mailer = new PHPMailer();
-        
-        $mailer->CharSet = 'utf-8';
-        
-        $mailer->AddAddress($email,$user_rec['name']);
-        
-        $mailer->Subject = "Your new password for ".$this->sitename;
-
-        $mailer->From = $this->GetFromAddress();
-        
-        $mailer->Body ="Hello ".$user_rec['name']."\r\n\r\n".
-        "Your password is reset successfully. ".
-        "Here is your updated login:\r\n".
-        "username:".$user_rec['username']."\r\n".
-        "password:$new_password\r\n".
-        "\r\n".
-        "Login here: ".$this->GetAbsoluteURLFolder()."/login.php\r\n".
-        "\r\n".
-        "Regards,\r\n".
-        "Webmaster\r\n".
-        $this->sitename;
-        
-        if(!$mailer->Send())
-        {
-            return false;
-        }
-        return true;
-    }    
-    
-    function ValidateRegistrationSubmission()
-    {
-        //This is a hidden input field. Humans won't fill this field.
-        if(!empty($_POST[$this->GetSpamTrapInputName()]) )
-        {
-            //The proper error is not given intentionally
-            $this->HandleError("Automated submission prevention: case 2 failed");
-            return false;
-        }
-        
-        $validator = new FormValidator();
-        $validator->addValidation("name","req","Please fill in Name");
-        $validator->addValidation("department","req","Please fill in Department");
-        $validator->addValidation("degree","req","Please fill in Degree");
-
-        
-        if(!$validator->ValidateForm())
-        {
-            $error='';
-            $error_hash = $validator->GetErrors();
-            foreach($error_hash as $inpname => $inp_err)
-            {
-                $error .= $inpname.':'.$inp_err."\n";
-            }
-            $this->HandleError($error);
-            return false;
-        }        
-        return true;
-    }
-    
     function CollectRegistrationSubmission(&$formvars)
     {
         $formvars['name'] = $this->Sanitize($_POST['name']);
@@ -364,36 +162,6 @@ class FairHandler
         $scriptFolder = (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on')) ? 'https://' : 'http://';
         $scriptFolder .= $_SERVER['HTTP_HOST'] . dirname($_SERVER['REQUEST_URI']);
         return $scriptFolder;
-    }
-
-    function SaveToDatabase(&$formvars)
-    {
-        if(!$this->DBLogin())
-        {
-            $this->HandleError("Database login failed!");
-            return false;
-        }
-        if(!$this->Ensuretable())
-        {
-            return false;
-        }
-        if(!$this->IsFieldUnique($formvars,'email'))
-        {
-            $this->HandleError("This email is already registered");
-            return false;
-        }
-        
-        if(!$this->IsFieldUnique($formvars,'username'))
-        {
-            $this->HandleError("This UserName is already used. Please try another username");
-            return false;
-        }        
-        if(!$this->InsertIntoDB($formvars))
-        {
-            $this->HandleError("Inserting to Database failed!");
-            return false;
-        }
-        return true;
     }
     
     function IsFieldUnique($formvars,$fieldname)
@@ -451,7 +219,7 @@ class FairHandler
         return $ret_str;
     }
     
- /*
+    /*
     Sanitize() function removes any potential threat from the
     data submitted. Prevents email injections or any other hacker attempts.
     if $remove_nl is true, newline chracters are removed from the input.
@@ -485,6 +253,38 @@ class FairHandler
     }    
 
     //-------Main Operations ----------------------
+    //----------Student----------------------------
+
+    function ValidateStudentRegistrationSubmission()
+    {
+        //This is a hidden input field. Humans won't fill this field.
+        if(!empty($_POST[$this->GetSpamTrapInputName()]) )
+        {
+            //The proper error is not given intentionally
+            $this->HandleError("Automated submission prevention: case 2 failed");
+            return false;
+        }
+        
+        $validator = new FormValidator();
+        $validator->addValidation("name","req","Please fill in Name");
+        $validator->addValidation("department","req","Please fill in Department");
+        $validator->addValidation("degree","req","Please fill in Degree");
+
+        
+        if(!$validator->ValidateForm())
+        {
+            $error='';
+            $error_hash = $validator->GetErrors();
+            foreach($error_hash as $inpname => $inp_err)
+            {
+                $error .= $inpname.':'.$inp_err."\n";
+            }
+            $this->HandleError($error);
+            return false;
+        }        
+        return true;
+    }
+    
     function RegisterStudent()
     {
         if(!isset($_POST['submitted']))
@@ -494,7 +294,7 @@ class FairHandler
         
         $formvars = array();
         
-        if(!$this->ValidateRegistrationSubmission())
+        if(!$this->ValidateStudentRegistrationSubmission())
         {
             return false;
         }
@@ -583,8 +383,233 @@ class FairHandler
             return false;
         }        
         return true;
+    }  
+
+    //-------------------Company-----------------------
+
+    function ValidateCompanyRegistrationSubmission()
+    {
+        //This is a hidden input field. Humans won't fill this field.
+        if(!empty($_POST[$this->GetSpamTrapInputName()]) )
+        {
+            //The proper error is not given intentionally
+            $this->HandleError("Automated submission prevention: case 2 failed");
+            return false;
+        }
+        
+        $validator = new FormValidator();
+        $validator->addValidation("name","req","Please fill in Name");
+        $validator->addValidation("amount","req","Please fill in the Sponsorship Amount");
+        $validator->addValidation("amount","num","Please fill in a Numeric value");
+        $validator->addValidation("amount","gt=5000","Minimum value $5000");
+
+        
+        if(!$validator->ValidateForm())
+        {
+            $error='';
+            $error_hash = $validator->GetErrors();
+            foreach($error_hash as $inpname => $inp_err)
+            {
+                $error .= $inpname.':'.$inp_err."\n";
+            }
+            $this->HandleError($error);
+            return false;
+        }        
+        return true;
+    }
+        
+    function RegisterCompany()
+    {
+        if(!isset($_POST['submitted']))
+        {
+           return false;
+        }
+        
+        $formvars = array();
+        
+        if(!$this->ValidateCompanyRegistrationSubmission())
+        {
+            return false;
+        }
+        
+        // $this->CollectRegistrationSubmission($formvars);
+
+        $formvars['name'] = $_POST['name'];
+        $formvars['amount'] = $_POST['amount'];
+
+        if($_POST['amount'] >= 15000)
+        {
+            $formvars['location'] = "Prime Arena, Ground floor";
+            $formvars['size'] = 40;
+        } elseif ($_POST['amount'] >= 10000) {
+            $formvars['location'] = "Game Arena, Ground floor";
+            $formvars['size'] = 25;
+        } else {
+            $formvars['location'] = "Assembly Ground";
+            $formvars['size'] = 15;
+        }
+        
+        if(!$this->AddCompany($formvars))
+        {
+            return false;
+        }
+        
+        return true;
+    }
+
+    function AddCompany(&$formvars)
+    {
+        if(!$this->DBLogin())
+        {
+            $this->HandleError("Database login failed!");
+            return false;
+        }
+        if(!$this->EnsureCompanyTables())
+        {
+            return false;
+        }   
+        if(!$this->InsertCompany($formvars))
+        {
+            $this->HandleError("Inserting to Database failed!");
+            return false;
+        }
+        return true;
+    }
+
+    function EnsureCompanyTables()
+    {
+        $result = mysqli_query($this->connection, "SHOW COLUMNS FROM BOOTH");   
+        if(!$result || mysqli_num_rows($result) <= 0)
+        {
+            return $this->CreateBoothTable();
+        }
+
+        $result = mysqli_query($this->connection, "SHOW COLUMNS FROM COMPANY");   
+        if(!$result || mysqli_num_rows($result) <= 0)
+        {
+            return $this->CreateCompanyTable();
+        }
+
+        $result = mysqli_query($this->connection, "SHOW COLUMNS FROM SPONSORSHIP");   
+        if(!$result || mysqli_num_rows($result) <= 0)
+        {
+            return $this->CreateSponsorshipTable();
+        }
+        return true;
+    }
+    
+    function CreateBoothTable()
+    {
+        $qry = "Create Table BOOTH (".
+                "id INT NOT NULL AUTO_INCREMENT ,".
+                "location VARCHAR( 100 ) NOT NULL ,".
+                "size FLOAT UNSIGNED NULL DEFAULT 10 COMMENT 'in sqft',".
+                "PRIMARY KEY (id))".
+                ")";
+                
+        if(!mysqli_query($this->connection, $qry))
+        {
+            $this->HandleDBError("Error creating the table \nquery was\n $qry");
+            return false;
+        }
+        return true;
+    }
+    
+    function CreateCompanyTable()
+    {
+        $qry = "Create Table COMPANY (".
+                "id INT NOT NULL AUTO_INCREMENT,".
+                "name VARCHAR(45) NOT NULL,".
+                "Booth_id INT NOT NULL,".
+                "PRIMARY KEY (id),".
+                "CONSTRAINT fk_Company_Booth1 ".
+                "FOREIGN KEY (Booth_id)".
+                "REFERENCES ". $this->database.".Booth (id)".
+                "ON DELETE NO ACTION".
+                "ON UPDATE NO ACTION".
+                ")";
+                
+        if(!mysqli_query($this->connection, $qry))
+        {
+            $this->HandleDBError("Error creating the table \nquery was\n $qry");
+            return false;
+        }
+        return true;
+    }
+    
+    function CreateSponsorshipTable()
+    {
+        $qry = "Create Table SPONSORSHIP (".
+                "amount FLOAT NOT NULL COMMENT 'in USD',".
+                "category INT(10) GENERATED ALWAYS AS (amount / 5000) VIRTUAL,".
+                "Company_id INT NOT NULL,".
+                "PRIMARY KEY (Company_id),".
+                "CONSTRAINT fk_Sponsorship_Company1".
+                "FOREIGN KEY (Company_id)".
+                "REFERENCES ". $this->database.".Company (id)".
+                "ON DELETE NO ACTION".
+                "ON UPDATE NO ACTION".
+                ")";
+                
+        if(!mysqli_query($this->connection, $qry))
+        {
+            $this->HandleDBError("Error creating the table \nquery was\n $qry");
+            return false;
+        }
+        return true;
+    }
+    
+    function InsertCompany(&$formvars)
+    {
+        $insert_query = 'insert into booth(
+                location,
+                size
+                )
+                values
+                (
+                "' . $formvars['location'] . '",
+                ' . $formvars['size'] . '
+                )';      
+        if(!mysqli_query($this->connection, $insert_query))
+        {
+            $this->HandleDBError("Error inserting data to the table\nquery:$insert_query");
+            return false;
+        }  
+        $boothID = mysqli_insert_id($this->connection);
+
+        $insert_query = 'insert into company(
+                name,
+                Booth_id
+                )
+                values
+                (
+                "' . $formvars['name'] . '",
+                ' . $boothID . '
+                )';      
+        if(!mysqli_query($this->connection, $insert_query))
+        {
+            $this->HandleDBError("Error inserting data to the table\nquery:$insert_query");
+            return false;
+        }  
+
+        $companyID = mysqli_insert_id($this->connection);
+
+        $insert_query = 'insert into sponsorship(
+                amount,
+                Company_id
+                )
+                values
+                (
+                ' . $formvars['amount'] . ',
+                ' . $companyID . '
+                )';      
+        if(!mysqli_query($this->connection, $insert_query))
+        {
+            $this->HandleDBError("Error inserting data to the table\nquery:$insert_query");
+            return false;
+        }        
+        return true;
     }
 }
-
 
 ?>
