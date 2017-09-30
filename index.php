@@ -25,7 +25,10 @@
         <input type='submit' name='C_button' value='Company' />
         </form>";
 
-
+        echo
+        "<form action='search' method='post'>
+        <input type='submit' name='F_button' value='Job Search' />
+        </form>";
       ?>       
   </body>       
 </html>

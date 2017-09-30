@@ -1,11 +1,13 @@
 <?PHP
 require_once("/../util/config.php");
-
+session_start();
 if(isset($_POST['submitted']))
 {
    if($handler->RegisterCompany())
    {
-        $handler->RedirectToURL("AddJob.php");
+        $_SESSION['companyID'] = $GLOBALS['companyID'];
+        $_SESSION['companyName'] = $GLOBALS['companyName'];
+        $handler->RedirectToURL("success.php");
    }
 }
 
@@ -59,6 +61,7 @@ if(isset($_POST['submitted']))
     </div>
 
     </fieldset>
-    </form>     
+    </form>  
+  </div>     
   </body>       
 </html>

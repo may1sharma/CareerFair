@@ -11,6 +11,7 @@ class FairHandler
     var $rand_key;
     
     var $error_message;
+    
 
     function InitDB($host,$uname,$pwd,$database,$tablename)
     {
@@ -199,13 +200,6 @@ class FairHandler
         return true;
     }    
     
-    
-    function MakeConfirmationMd5($email)
-    {
-        $randno1 = rand();
-        $randno2 = rand();
-        return md5($email.$this->rand_key.$randno1.''.$randno2);
-    }
     function SanitizeForSQL($str)
     {
         if( function_exists( "mysql_real_escape_string" ) )
@@ -346,7 +340,7 @@ class FairHandler
     function CreateStudentTable()
     {
         $qry = "Create Table STUDENT (".
-                "id_user INT NOT NULL AUTO_INCREMENT ,".
+                "id INT NOT NULL AUTO_INCREMENT ,".
                 "name VARCHAR( 45 ) NOT NULL ,".
                 "department VARCHAR(45) NOT NULL,".
                 "degree_level VARCHAR(45) NOT NULL,".
@@ -592,7 +586,8 @@ class FairHandler
             return false;
         }  
 
-        $companyID = mysqli_insert_id($this->connection);
+        $GLOBALS['companyID'] = mysqli_insert_id($this->connection);
+        $GLOBALS['companyName'] = $formvars['name'];
 
         $insert_query = 'insert into sponsorship(
                 amount,
@@ -601,7 +596,7 @@ class FairHandler
                 values
                 (
                 ' . $formvars['amount'] . ',
-                ' . $companyID . '
+                ' . $GLOBALS['companyID'] . '
                 )';      
         if(!mysqli_query($this->connection, $insert_query))
         {
@@ -609,6 +604,255 @@ class FairHandler
             return false;
         }        
         return true;
+    }
+
+    //---------------------Job Postings-----------------
+
+    function ValidatePostedJobSubmission()
+    {
+        //This is a hidden input field. Humans won't fill this field.
+        if(!empty($_POST[$this->GetSpamTrapInputName()]) )
+        {
+            //The proper error is not given intentionally
+            $this->HandleError("Automated submission prevention: case 2 failed");
+            return false;
+        }
+        
+        $validator = new FormValidator();
+        $validator->addValidation("position","req","Please fill in the Job Title");
+        $validator->addValidation("degree_check_list","selmin=1","Please select at least one degree level");
+        $validator->addValidation("dept_check_list","selmin=1","Please select at least one Department");
+
+        
+        if(!$validator->ValidateForm())
+        {
+            $error='';
+            $error_hash = $validator->GetErrors();
+            foreach($error_hash as $inpname => $inp_err)
+            {
+                $error .= $inpname.':'.$inp_err."\n";
+            }
+            $this->HandleError($error);
+            return false;
+        }        
+        return true;
+    }
+    
+    function AddPosting()
+    {
+        if(!isset($_POST['submitted']))
+        {
+           return false;
+        }
+        
+        $formvars = array();
+        
+        if(!$this->ValidatePostedJobSubmission())
+        {
+            return false;
+        }
+        
+        // $this->CollectRegistrationSubmission($formvars);
+
+        $formvars['position'] = $_POST['position'];
+        $formvars['department'] = $_POST['dept_check_list'];
+        $formvars['degree'] = $_POST['degree_check_list'];
+        $formvars['intl'] = $_POST['intl'];
+        
+        if(!$this->AddJob($formvars))
+        {
+            return false;
+        }
+        
+        return true;
+    }
+
+    function AddJob(&$formvars)
+    {
+        if(!$this->DBLogin())
+        {
+            $this->HandleError("Database login failed!");
+            return false;
+        }
+        if(!$this->EnsureJobTable())
+        {
+            return false;
+        }   
+        if(!$this->InsertJob($formvars))
+        {
+            $this->HandleError("Inserting to Database failed!");
+            return false;
+        }
+        return true;
+    }
+
+    function EnsureJobTable()
+    {
+        $result = mysqli_query($this->connection, "SHOW COLUMNS FROM JOBS");   
+        if(!$result || mysqli_num_rows($result) <= 0)
+        {
+            return $this->CreateJobTable();
+        }
+        $result = mysqli_query($this->connection, "SHOW COLUMNS FROM JobAllowsDepartment");   
+        if(!$result || mysqli_num_rows($result) <= 0)
+        {
+            return $this->CreateAllowedDepartmentTable();
+        }
+        $result = mysqli_query($this->connection, "SHOW COLUMNS FROM JobAllowsDegreeLevel");   
+        if(!$result || mysqli_num_rows($result) <= 0)
+        {
+            return $this->CreateAllowedDegreeTable();
+        }
+        return true;
+    }
+    
+    function CreateJobTable()
+    {
+        $qry = "Create Table JOBS (".
+                "id INT NOT NULL AUTO_INCREMENT ,".
+                "position VARCHAR( 45 ) NOT NULL ,".
+                "allowsInternational BIT(1) NOT NULL DEFAULT 0,".
+                "Company_id INT NOT NULL,".
+                "PRIMARY KEY (id),".
+                "CONSTRAINT fk_Jobs_Company1".
+                "FOREIGN KEY (Company_id)".
+                "REFERENCES ". $this->database.".Company (id)".
+                "ON DELETE NO ACTION".
+                "ON UPDATE NO ACTION".
+                ")";
+                
+        if(!mysqli_query($this->connection, $qry))
+        {
+            $this->HandleDBError("Error creating the table \nquery was\n $qry");
+            return false;
+        }
+        return true;
+    }
+
+    function CreateAllowedDepartmentTable()
+    {
+        $qry = "Create Table JobAllowsDepartment (".
+                "department VARCHAR( 50 ) NOT NULL ,".
+                "Jobs_id INT NOT NULL,".
+                "CONSTRAINT fk_Jobs2".
+                "FOREIGN KEY (Jobs_id)".
+                "REFERENCES ". $this->database.".Jobs (id)".
+                "ON DELETE NO ACTION".
+                "ON UPDATE NO ACTION".
+                ")";
+                
+        if(!mysqli_query($this->connection, $qry))
+        {
+            $this->HandleDBError("Error creating the table \nquery was\n $qry");
+            return false;
+        }
+        return true;
+    }
+
+    function CreateAllowedDegreeTable()
+    {
+        $qry = "Create Table JobAllowsDegreeLevel (".
+                "degree VARCHAR( 50 ) NOT NULL ,".
+                "Jobs_id INT NOT NULL,".
+                "CONSTRAINT fk_Jobs1".
+                "FOREIGN KEY (Jobs_id)".
+                "REFERENCES ". $this->database.".Jobs (id)".
+                "ON DELETE NO ACTION".
+                "ON UPDATE NO ACTION".
+                ")";
+                
+        if(!mysqli_query($this->connection, $qry))
+        {
+            $this->HandleDBError("Error creating the table \nquery was\n $qry");
+            return false;
+        }
+        return true;
+    }
+    
+    function InsertJob(&$formvars)
+    {
+        $insert_query = 'insert into Jobs(
+                position,
+                allowsInternational,
+                Company_id
+                )
+                values
+                (
+                "' . $formvars['position'] . '",
+                ' . $formvars['intl'] . ',
+                ' . $GLOBALS['companyID'] . '
+                )';      
+        if(!mysqli_query($this->connection, $insert_query))
+        {
+            $this->HandleDBError("Error inserting data to the table\nquery:$insert_query");
+            return false;
+        }        
+        $GLOBALS['jobID'] = mysqli_insert_id($this->connection);
+
+        foreach ($formvars['department'] as $dept) {
+            $insert_query = 'insert into JobAllowsDepartment(
+                department,
+                Jobs_id
+                )
+                values
+                (
+                "' . $dept . '",
+                ' . $GLOBALS['jobID'] . '
+                )';      
+            if(!mysqli_query($this->connection, $insert_query))
+            {
+                $this->HandleDBError("Error inserting data to the table\nquery:$insert_query");
+                return false;
+            } 
+        }
+
+        foreach ($formvars['degree'] as $deg) {
+            $insert_query = 'insert into JobAllowsDegreeLevel(
+                degree,
+                Jobs_id
+                )
+                values
+                (
+                "' . $deg . '",
+                ' . $GLOBALS['jobID'] . '
+                )';      
+            if(!mysqli_query($this->connection, $insert_query))
+            {
+                $this->HandleDBError("Error inserting data to the table\nquery:$insert_query");
+                return false;
+            } 
+        }
+            
+        return true;
+    }  
+
+    //------------------------Search---------------------------
+
+    function SearchJobs(&$department, &$degree, &$intl)
+    {
+        if(!$this->DBLogin())
+        {
+            $this->HandleError("Database login failed!");
+            return false;
+        }
+        
+        $search_query = 'SELECT jobs.id as jID, company.name as cName, jobs.position, booth.id as bID, booth.location FROM 
+            ((jobs INNER JOIN joballowsdepartment ON jobs.id = joballowsdepartment.Jobs_id) 
+            INNER JOIN joballowsdegreelevel ON jobs.id = joballowsdegreelevel.Jobs_id) 
+            INNER JOIN (company INNER JOIN booth ON company.Booth_id = booth.id) 
+            ON jobs.Company_id = company.id WHERE 
+            joballowsdepartment.department = '. $department .
+            ' and joballowsdegreelevel.degree = '. $degree. 
+            ' and jobs.allowsInternational = '. $intl ;
+
+        $response = mysqli_query($this->connection, $search_query);
+        if(!$response)
+        {
+            $this->HandleDBError("Error searching database \nquery:$search_query");
+            return null;
+        } 
+
+        return $response;
     }
 }
 
