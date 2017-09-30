@@ -89,7 +89,8 @@ if(isset($_POST['submitted']))
                 <td>Job Id</td>
                 <td>Company</td>
                 <td>Position</td>
-                <td>Booth Location</td>
+                <td>Booth</td>
+                <td>Location</td>
             </tr>
             <?php
                 if (!is_null($search_results)) {
@@ -100,7 +101,8 @@ if(isset($_POST['submitted']))
                        echo "<td>".$row['jID']."</td>";
                        echo "<td>".$row['cName']."</td>";
                        echo "<td>".$row['position']."</td>";
-                       echo "<td>"."#".$row['bID'].", ".$row['location']."</td>";
+                       echo "<td>".$row['bID']."</td>";
+                       echo "<td>".$row['location']."</td>";
                        echo "</tr>";
                        $i = ($i==0) ? 1:0;
                    }

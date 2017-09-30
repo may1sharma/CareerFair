@@ -1,11 +1,17 @@
 <?PHP
 require_once("/../util/config.php");
-
+session_start();
 if(isset($_POST['submitted']))
 {
    if($handler->RegisterStudent())
    {
-        $handler->RedirectToURL("success.html");
+        $_SESSION['studentID'] = $GLOBALS['studentID'];
+        $_SESSION['studentName'] = $GLOBALS['studentName'];
+        $_SESSION['sDepartment'] = $GLOBALS['sDepartment'];
+        $_SESSION['sDegree'] = $GLOBALS['sDegree'];
+        $_SESSION['sIntl'] = $GLOBALS['sIntl'];
+
+        $handler->RedirectToURL("success.php");
    }
 }
 
@@ -25,6 +31,10 @@ if(isset($_POST['submitted']))
   <body>     
 
     <div id='fg_membersite'>
+    <form action='../'method='post'>
+        <input type='submit' name='Home' value='Home' />
+    </form>
+    
     <form id='register' action='' method='post' accept-charset='UTF-8'>
     <fieldset >
     <h2> 
@@ -43,12 +53,31 @@ if(isset($_POST['submitted']))
     </div>
     <div class='container'>
         <label for='department' >Department*:</label><br/>
-        <input type='text' name='department' id='department' value='<?php echo $handler->SafeDisplay('department') ?>' maxlength="50" /><br/>
+        <select name='department' id='department'>
+            <option value=0>Select Department</option>
+            <option value=1>Computer Science</option>
+            <option value=2>Computer Engineering</option>
+            <option value=3>Electronics</option>
+            <option value=4>Mechanical</option>
+            <option value=5>Civil</option>
+            <option value=6>Chemical</option>
+            <option value=7>Performing Arts</option>
+            <option value=8>Mathematics</option>
+            <option value=9>Psychology</option>
+        </select><br/>
         <span id='register_department_errorloc' class='error'></span>
     </div>
     <div class='container'>
         <label for='degree' >Degree Level*:</label><br/>
-        <input type='text' name='degree' id='degree' value='<?php echo $handler->SafeDisplay('degree') ?>' maxlength="50" /><br/>
+        <select name='degree' id='degree'> 
+            <option value=0>Select Degree</option>
+            <option value=1>Freshmen</option>
+            <option value=2>Sophomores</option>
+            <option value=3>Juniors</option>
+            <option value=4>Seniors</option>
+            <option value=5>Masters</option>
+            <option value=6>PhD</option>
+        </select><br/>
         <span id='register_degree_errorloc' class='error'></span>
     </div>
     

@@ -376,6 +376,12 @@ class FairHandler
             $this->HandleDBError("Error inserting data to the table\nquery:$insert_query");
             return false;
         }        
+        $GLOBALS['studentID'] = mysqli_insert_id($this->connection);
+        $GLOBALS['studentName'] = $formvars['name'];
+        $GLOBALS['sDepartment'] = $formvars['department'];
+        $GLOBALS['sDegree'] = $formvars['degree'];
+        $GLOBALS['sIntl'] = $formvars['intl'];
+
         return true;
     }  
 
@@ -828,14 +834,14 @@ class FairHandler
 
     //------------------------Search---------------------------
 
-    function SearchJobs(&$department, &$degree, &$intl)
+    function SearchJobs($department, $degree, $intl)
     {
         if(!$this->DBLogin())
         {
             $this->HandleError("Database login failed!");
             return false;
         }
-        
+
         $search_query = 'SELECT jobs.id as jID, company.name as cName, jobs.position, booth.id as bID, booth.location FROM 
             ((jobs INNER JOIN joballowsdepartment ON jobs.id = joballowsdepartment.Jobs_id) 
             INNER JOIN joballowsdegreelevel ON jobs.id = joballowsdegreelevel.Jobs_id) 
