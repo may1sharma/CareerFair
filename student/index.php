@@ -11,7 +11,7 @@ if(isset($_POST['submitted']))
         $_SESSION['sDegree'] = $GLOBALS['sDegree'];
         $_SESSION['sIntl'] = $GLOBALS['sIntl'];
 
-        $handler->RedirectToURL("success.php");
+        $handler->RedirectToURL("success");
    }
 }
 
@@ -34,7 +34,7 @@ if(isset($_POST['submitted']))
     <form action='../'method='post'>
         <input type='submit' name='Home' value='Home' />
     </form>
-    
+
     <form id='register' action='' method='post' accept-charset='UTF-8'>
     <fieldset >
     <h2> 

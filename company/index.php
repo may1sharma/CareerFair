@@ -1,13 +1,28 @@
 <?PHP
 require_once("/../util/config.php");
 session_start();
+
+if(isset($_POST['loggedin']))
+{
+   if($handler->CheckCompany($_POST['cName']))
+   {
+        $_SESSION['companyID'] = $GLOBALS['companyID'];
+        $_SESSION['companyName'] = $GLOBALS['companyName'];
+
+        //Todo Registration Success Notification
+        $handler->RedirectToURL("manage");
+   } else {
+        echo "First Things First. Register yourself ".$_POST['cName'];
+   }
+}
+
 if(isset($_POST['submitted']))
 {
    if($handler->RegisterCompany())
    {
         $_SESSION['companyID'] = $GLOBALS['companyID'];
         $_SESSION['companyName'] = $GLOBALS['companyName'];
-        $handler->RedirectToURL("success.php");
+        $handler->RedirectToURL("success");
    }
 }
 
@@ -26,6 +41,28 @@ if(isset($_POST['submitted']))
   </head>       
   <body>     
 
+    <?PHP 
+    if ($DebugMode) {
+        echo "<div><span class='error'>". $handler->GetErrorMessage() ."</span></div>";
+    }
+    ?>
+
+    <div id='fg_membersite'> 
+    <fieldset >
+    <form id='login' action='' method='post' accept-charset='UTF-8'>
+    <h2><legend>Login</legend></h2>
+    <input type='hidden' name='loggedin' id='loggedin' value='1'/>
+    <div class='container'>
+        <label for='cName' >Enter Company Name: </label><br/>
+        <input type='text' name='cName' id='cName' value='<?php echo $handler->SafeDisplay('cName') ?>' maxlength="50" /><br/>
+    </div>
+    <div class='container'>
+        <input type='submit' name='in' value='Log In' />
+    </div>
+    </form>
+    </fieldset>
+    </div>
+
     <div id='fg_membersite'>
     <form id='register' action='' method='post' accept-charset='UTF-8'>
     <fieldset >
@@ -37,7 +74,6 @@ if(isset($_POST['submitted']))
 
     <div class='short_explanation'>*required fields </div>
 
-    <div><span class='error'><?php echo $handler->GetErrorMessage(); ?></span></div>
     <div class='container'>
         <label for='name' >Company Name*: </label><br/>
         <input type='text' name='name' id='name' value='<?php echo $handler->SafeDisplay('name') ?>' maxlength="50" /><br/>
@@ -57,7 +93,7 @@ if(isset($_POST['submitted']))
     </div>
 
     <div class='container'>
-        <input type='submit' name='Submit' value='Submit' />
+        <input type='submit' name='Submit' value='Register' />
     </div>
 
     </fieldset>

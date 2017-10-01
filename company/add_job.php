@@ -27,18 +27,25 @@
     <div class='container'>
         <label for='degree_check_list[]' >Required Degree Level*: 
         </label><br/>
-        <input type="checkbox" name="degree_check_list[]" value="1"><label>Freshmen</label><br/>
+        <?PHP for ($i = 1; $i < count($Degree_Level_List); $i++) {
+            echo '<input type="checkbox" name="degree_check_list[]" value="'.$i.'">
+                <label>'.$Degree_Level_List[$i].'</label><br/>';
+        } ?>
+        <!-- <input type="checkbox" name="degree_check_list[]" value="1"><label>Freshmen</label><br/>
         <input type="checkbox" name="degree_check_list[]" value="2"><label>Sophomores</label><br/>
         <input type="checkbox" name="degree_check_list[]" value="3"><label>Juniors</label><br/>
         <input type="checkbox" name="degree_check_list[]" value="4"><label>Seniors</label><br/>
         <input type="checkbox" name="degree_check_list[]" value="5"><label>Masters</label><br/>
-        <input type="checkbox" name="degree_check_list[]" value="6"><label>PhD</label><br/>
+        <input type="checkbox" name="degree_check_list[]" value="6"><label>PhD</label><br/> -->
         <span id='register_degree_errorloc' class='error'></span>
     </div>
     <div class='container'>
-        <label for='dept_check_list[]' >Open for Departments*: 
-        </label><br/>
-        <input type="checkbox" name="dept_check_list[]" value="1"><label>Computer Science</label><br/>
+        <label for='dept_check_list[]' >Open for Departments*: </label><br/>
+        <?PHP for ($i = 1; $i < count($Department_List); $i++) {
+            echo '<input type="checkbox" name="dept_check_list[]" value="'.$i.'">
+                <label>'.$Department_List[$i].'</label><br/>';
+        } ?>
+        <!-- <input type="checkbox" name="dept_check_list[]" value="1"><label>Computer Science</label><br/>
         <input type="checkbox" name="dept_check_list[]" value="2"><label>Computer Engineering</label><br/>
         <input type="checkbox" name="dept_check_list[]" value="3"><label>Electronics</label><br/>
         <input type="checkbox" name="dept_check_list[]" value="4"><label>Mechanical</label><br/>
@@ -46,7 +53,7 @@
         <input type="checkbox" name="dept_check_list[]" value="6"><label>Chemical</label><br/>
         <input type="checkbox" name="dept_check_list[]" value="7"><label>Performing Arts</label><br/>
         <input type="checkbox" name="dept_check_list[]" value="8"><label>Mathematics</label><br/>
-        <input type="checkbox" name="dept_check_list[]" value="9"><label>Psychology</label><br/>
+        <input type="checkbox" name="dept_check_list[]" value="9"><label>Psychology</label><br/> -->
         <span id='register_degree_errorloc' class='error'></span>
     </div>
     <div class='container'>

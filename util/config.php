@@ -5,16 +5,20 @@ $handler = new FairHandler();
 
 //Provide your database login details here:
 //hostname, user name, password, database name and table name
-//note that the script will create the table (for example, fgusers in this case)
-//by itself on submitting register.php for the first time
 $handler->InitDB(/*hostname*/'localhost:3307',
                       /*username*/'root',
                       /*password*/'',
                       /*database name*/'mayank.sharma-careerfair',
                       /*table name*/'student');
 
-//For better security. Get a random string from this link: http://tinyurl.com/randstr
-// and put it here
-$handler->SetRandomKey('qSRcVS6DrTzrPvr');
+$handler->SetRandomKey('qSRcVS6DrTzssdM1SdrPvr');
+
+$DebugMode = 1; // Set Error Debugging Mode ON{1} or OFF{0}
+
+// List all Degree Levels here
+$Degree_Level_List = array("Select Degree", "Freshmen", "Sophomores", "Juniors", "Seniors", "Masters", "PhD");
+
+// List all Departments here
+$Department_List = array("Select Department", "Computer Science", "Computer Engineering", "Electronics", "Mechanical", "Civil", "Chemical", "Performing Arts", "Mathematics", "Psychology");
 
 ?>

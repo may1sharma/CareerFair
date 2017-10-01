@@ -610,6 +610,47 @@ class FairHandler
             return false;
         }        
         return true;
+    } 
+
+    function CheckCompany($name)
+    {
+        if(!$this->DBLogin())
+        {
+            $this->HandleError("Database login failed!");
+            return false;
+        }
+
+        $check_query = 'SELECT company.id FROM company WHERE company.name = "'.$name.'"';
+        $response = mysqli_query($this->connection, $check_query);
+        if(!mysqli_num_rows($response))
+        {
+            $this->HandleDBError("Error searching company credentials in DB \nquery:$check_query");
+            return false;
+        } 
+        $GLOBALS['companyID'] = mysqli_fetch_row($response)[0];
+        $GLOBALS['companyName'] = $name;
+
+        return true;
+    }
+
+    function getCompanyInfo($id) 
+    {
+        if(!$this->DBLogin())
+        {
+            $this->HandleError("Database login failed!");
+            return false;
+        }
+
+        $check_query = 'SELECT booth.id as bID, booth.location, booth.size, sponsorship.amount, 
+            sponsorship.category FROM (company INNER JOIN booth ON company.Booth_id = booth.id) 
+            INNER JOIN sponsorship ON company.id = sponsorship.Company_id WHERE company.id = '.$id;
+        $response = mysqli_query($this->connection, $check_query);
+        if(!$response)
+        {
+            $this->HandleDBError("Error searching company info in DB \nquery:$check_query");
+            return null;
+        } 
+        return $response;
     }
 
     //---------------------Job Postings-----------------
@@ -793,8 +834,20 @@ class FairHandler
             $this->HandleDBError("Error inserting data to the table\nquery:$insert_query");
             return false;
         }        
-        $GLOBALS['jobID'] = mysqli_insert_id($this->connection);
+        $GLOBALS['jobID'] = mysqli_insert_id($this->connection);        
+        $formvars['jobID'] = $GLOBALS['jobID'];
 
+        if(!$this->InsertDeptDeg($formvars))
+        {
+            $this->HandleError("Inserting to Database failed!");
+            return false;
+        }
+            
+        return true;
+    } 
+
+    function InsertDeptDeg(&$formvars)
+    {
         foreach ($formvars['department'] as $dept) {
             $insert_query = 'insert into JobAllowsDepartment(
                 department,
@@ -803,7 +856,7 @@ class FairHandler
                 values
                 (
                 "' . $dept . '",
-                ' . $GLOBALS['jobID'] . '
+                ' . $formvars['jobID'] . '
                 )';      
             if(!mysqli_query($this->connection, $insert_query))
             {
@@ -820,7 +873,7 @@ class FairHandler
                 values
                 (
                 "' . $deg . '",
-                ' . $GLOBALS['jobID'] . '
+                ' . $formvars['jobID'] . '
                 )';      
             if(!mysqli_query($this->connection, $insert_query))
             {
@@ -828,9 +881,186 @@ class FairHandler
                 return false;
             } 
         }
+        return true;
+    }
+
+    function EditPosting($jobID)
+    {
+        if(!isset($_POST['submitted']))
+        {
+           return false;
+        }
+        
+        $formvars = array();
+        
+        if(!$this->ValidatePostedJobSubmission())
+        {
+            return false;
+        }
+        
+        // $this->CollectRegistrationSubmission($formvars);
+
+        $formvars['position'] = $_POST['position'];
+        $formvars['department'] = $_POST['dept_check_list'];
+        $formvars['degree'] = $_POST['degree_check_list'];
+        $formvars['intl'] = $_POST['intl'];
+        $formvars['jobID'] = $jobID;
+        
+        if(!$this->EditJob($formvars))
+        {
+            $this->HandleError("Inserting to Database failed!");
+            return false;
+        }
+        
+        return true;
+    }
+
+    function EditJob(&$formvars)
+    {
+        if(!$this->DBLogin())
+        {
+            $this->HandleError("Database login failed!");
+            return false;
+        }
+
+        $update_query = 'UPDATE jobs SET position = "' . $formvars['position'] . '", 
+                allowsInternational = '.$formvars['intl'].'
+                WHERE id = ' . $formvars['jobID'] ;      
+        if(!mysqli_query($this->connection, $update_query))
+        {
+            $this->HandleDBError("Error updating data \nquery:$update_query");
+            return false;
+        }        
+        $GLOBALS['jobID'] = $formvars['jobID'];
+
+        //-----------This won't work--------------------------
+        // foreach ($formvars['department'] as $dept) {
+        //     $update_query = 'UPDATE joballowsdepartment SET department = "' . $dept . '"
+        //          WHERE Jobs_id = ' . $formvars['jobID'] ;      
+        //     if(!mysqli_query($this->connection, $update_query))
+        //     {
+        //         $this->HandleDBError("Error updating data to the table\nquery:$update_query");
+        //         return false;
+        //     } 
+        // }
+
+        // foreach ($formvars['degree'] as $deg) {
+        //     $update_query = 'UPDATE joballowsdegreelevel SET degree = "' . $deg . '"
+        //         WHERE Jobs_id = ' . $formvars['jobID'] ; 
+        //     if(!mysqli_query($this->connection, $update_query))
+        //     {
+        //         $this->HandleDBError("Error updating data to the table\nquery:$update_query");
+        //         return false;
+        //     } 
+        // }
+        //----------------------------------------------------
+
+        if(!$this->DeleteDeptDeg($formvars['jobID']))
+        {
+            $this->HandleError("Deletion to Database failed!");
+            return false;
+        }
+
+        if(!$this->InsertDeptDeg($formvars))
+        {
+            $this->HandleError("Inserting to Database failed!");
+            return false;
+        }
             
         return true;
-    }  
+    }
+
+    function DeleteDeptDeg($jobID)
+    {
+        $delete_query = 'DELETE FROM joballowsdepartment WHERE Jobs_id = '.$jobID;      
+        if(!mysqli_query($this->connection, $delete_query))
+        {
+            $this->HandleDBError("Error deleting data from the table\nquery:$delete_query");
+            return false;
+        }         
+
+        $delete_query = 'DELETE FROM joballowsdegreelevel WHERE Jobs_id = '.$jobID;      
+        if(!mysqli_query($this->connection, $delete_query))
+        {
+            $this->HandleDBError("Error deleting data from the table\nquery:$delete_query");
+            return false;
+        } 
+        return true;
+    }
+
+    function DeletePosting($jobID)
+    {
+        if(!$this->DBLogin())
+        {
+            $this->HandleError("Database login failed!");
+            return false;
+        }
+
+        if(!$this->DeleteDeptDeg($jobID))
+        {
+            $this->HandleError("Deletion to Database failed!");
+            return false;
+        }
+
+        $delete_query = 'DELETE FROM jobs WHERE id = '.$jobID;      
+        if(!mysqli_query($this->connection, $delete_query))
+        {
+            $this->HandleDBError("Error deleting data from the table\nquery:$delete_query");
+            return false;
+        }
+
+        return true;
+    }
+
+    function getJobs($companyID) 
+    {
+        
+
+        $select_query = 'SELECT id as jID, position, allowsInternational as intl FROM jobs WHERE jobs.Company_id = '.$companyID;
+        $response = mysqli_query($this->connection, $select_query);
+        if(!$response)
+        {
+            $this->HandleDBError("Error searching company info in DB \nquery:$select_query");
+            return null;
+        } 
+        return $response;
+    }
+
+    function getDepartments($jobID)
+    {
+        // if(!$this->DBLogin())
+        // {
+        //     $this->HandleError("Database login failed!");
+        //     return false;
+        // }
+
+        $select_query = 'SELECT department FROM joballowsdepartment WHERE Jobs_id = '.$jobID;
+        $response = mysqli_query($this->connection, $select_query);
+        if(!$response)
+        {
+            $this->HandleDBError("Error searching company info in DB \nquery:$select_query");
+            return null;
+        } 
+        return $response;
+    }
+
+    function getDegrees($jobID)
+    {
+        // if(!$this->DBLogin())
+        // {
+        //     $this->HandleError("Database login failed!");
+        //     return false;
+        // }
+
+        $select_query = 'SELECT degree FROM joballowsdegreelevel WHERE Jobs_id = '.$jobID;
+        $response = mysqli_query($this->connection, $select_query);
+        if(!$response)
+        {
+            $this->HandleDBError("Error searching company info in DB \nquery:$select_query");
+            return null;
+        } 
+        return $response;
+    }
 
     //------------------------Search---------------------------
 

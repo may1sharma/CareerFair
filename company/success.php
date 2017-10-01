@@ -8,7 +8,8 @@ if(isset($_POST['submitted']))
 {
    if($handler->AddPosting())
    {
-        $handler->RedirectToURL("job_success.php");
+        //Todo Success Notification
+        $handler->RedirectToURL("success");
    }
 }
 
@@ -22,10 +23,15 @@ if(isset($_POST['submitted']))
 </head>
 <body>
 <div id='fg_membersite_content'>
-<h2>Thanks for registering! <?php echo $companyName; ?></h2>
+<h2>Welcome <?php echo $companyName; ?></h2>
 <form action='../'method='post'>
 <input type='submit' name='Home' value='Home' />
 </form>
+</div>
+<div>
+    <form action='manage'method='post'>
+    <input type='submit' name='manage' value='Manage Jobs' />
+    </form>
 </div>
 
 <?php include'add_job.php'; ?>

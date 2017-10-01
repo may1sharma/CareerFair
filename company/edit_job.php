@@ -3,12 +3,16 @@ require_once("/../util/config.php");
 session_start();
 $companyID = htmlspecialchars($_SESSION['companyID'] );
 $companyName = htmlspecialchars($_SESSION['companyName'] );
+$jobID = htmlspecialchars($_SERVER['QUERY_STRING']);
+
+//TODO validate user  
 
 if(isset($_POST['submitted']))
 {
-   if($handler->AddPosting())
+   if($handler->EditPosting($jobID))
    {
-        $handler->RedirectToURL("job_success.php");
+        //TODO Success Notification 
+        $handler->RedirectToURL("manage");
    }
 }
 
@@ -22,10 +26,15 @@ if(isset($_POST['submitted']))
 </head>
 <body>
 <div id='fg_membersite_content'>
-<h2>Successfully Added Job Posting. </h2>
+<h2>Welcome <?php echo $companyName; ?> </h2>
 <form action='../'method='post'>
 <input type='submit' name='Home' value='Home' />
 </form>
+</div>
+<div>
+	<form action='manage'method='post'>
+	<input type='submit' name='manage' value='Manage Jobs' />
+	</form>
 </div>
 
 <?php include'add_job.php'; ?>
