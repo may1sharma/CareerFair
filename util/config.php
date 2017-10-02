@@ -5,11 +5,14 @@ $handler = new FairHandler();
 
 //Provide your database login details here:
 //hostname, user name, password, database name and table name
-$handler->InitDB(/*hostname*/'localhost:3307',
-                      /*username*/'root',
-                      /*password*/'',
-                      /*database name*/'mayank.sharma-careerfair',
-                      /*table name*/'student');
+$handler->InitDB(
+				  // 'database2.cs.tamu.edu', 
+				  /*hostname*/'localhost:3307',
+                  // 'mayank.sharma',  
+                  /*username*/'root',
+                  /*password*/'',
+                  /*database name*/'mayank.sharma-CareerFair',
+                  /*table name*/'student');
 
 $handler->SetRandomKey('qSRcVS6DrTzssdM1SdrPvr');
 

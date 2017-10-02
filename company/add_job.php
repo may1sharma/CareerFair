@@ -9,7 +9,6 @@
 
     <div class='short_explanation'>*required fields </div>
 
-    <div><span class='error'><?php echo $handler->GetErrorMessage(); ?></span></div>
     <div class='container'>
         <label for='position' >Position*: </label><br/>
         <input type='text' name='position' id='position' value='<?php echo $handler->SafeDisplay('position') ?>' maxlength="50" /><br/>

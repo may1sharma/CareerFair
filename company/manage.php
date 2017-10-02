@@ -16,6 +16,11 @@ $jobs = $handler->getJobs($companyID);
       <link rel="STYLESHEET" type="text/css" href="style/fg_membersite.css">
 </head>
 <body>
+    <?PHP 
+    if ($DebugMode) {
+        echo "<div><span class='error'>". $handler->GetErrorMessage() ."</span></div>";
+    }
+    ?>
 <div id='fg_membersite_content'>
 <h2>Welcome <?php echo $companyName; ?></h2>
 <form action='../'method='post'>

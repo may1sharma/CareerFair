@@ -26,8 +26,8 @@ DROP TABLE IF EXISTS `mayank.sharma-CareerFair`.`Student` ;
 CREATE TABLE IF NOT EXISTS `mayank.sharma-CareerFair`.`Student` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL,
-  `department` VARCHAR(45) NOT NULL,
-  `degree_level` VARCHAR(45) NOT NULL,
+  `department` TINYINT(2) NOT NULL,
+  `degree_level` TINYINT(2) NOT NULL,
   `isInternational` BIT(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
@@ -41,7 +41,7 @@ DROP TABLE IF EXISTS `mayank.sharma-CareerFair`.`Booth` ;
 CREATE TABLE IF NOT EXISTS `mayank.sharma-CareerFair`.`Booth` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `location` VARCHAR(100) NULL,
-  `size` FLOAT UNSIGNED NULL DEFAULT 10 COMMENT 'in sqft',
+  `size` FLOAT UNSIGNED NULL DEFAULT 10.0 COMMENT 'in sqft',
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
@@ -90,11 +90,11 @@ CREATE INDEX `fk_Job_Company_idx` ON `mayank.sharma-CareerFair`.`Jobs` (`Company
 
 
 -- -----------------------------------------------------
--- Table `mayank.sharma-CareerFair`.`application`
+-- Table `mayank.sharma-CareerFair`.`Application`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `mayank.sharma-CareerFair`.`application` ;
+DROP TABLE IF EXISTS `mayank.sharma-CareerFair`.`Application` ;
 
-CREATE TABLE IF NOT EXISTS `mayank.sharma-CareerFair`.`application` (
+CREATE TABLE IF NOT EXISTS `mayank.sharma-CareerFair`.`Application` (
   `Student_id` INT NOT NULL,
   `Jobs_id` INT NOT NULL,
   PRIMARY KEY (`Student_id`, `Jobs_id`),
@@ -110,9 +110,9 @@ CREATE TABLE IF NOT EXISTS `mayank.sharma-CareerFair`.`application` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-CREATE INDEX `fk_Jobs_applied_idx` ON `mayank.sharma-CareerFair`.`application` (`Jobs_id` ASC);
+CREATE INDEX `fk_Jobs_applied_idx` ON `mayank.sharma-CareerFair`.`Application` (`Jobs_id` ASC);
 
-CREATE INDEX `fk_Student_applying_idx` ON `mayank.sharma-CareerFair`.`application` (`Student_id` ASC);
+CREATE INDEX `fk_Student_applying_idx` ON `mayank.sharma-CareerFair`.`Application` (`Student_id` ASC);
 
 
 -- -----------------------------------------------------
@@ -121,8 +121,9 @@ CREATE INDEX `fk_Student_applying_idx` ON `mayank.sharma-CareerFair`.`applicatio
 DROP TABLE IF EXISTS `mayank.sharma-CareerFair`.`JobAllowsDepartment` ;
 
 CREATE TABLE IF NOT EXISTS `mayank.sharma-CareerFair`.`JobAllowsDepartment` (
-  `department` VARCHAR(50) NOT NULL,
+  `department` TINYINT(2) NOT NULL,
   `Jobs_id` INT NOT NULL,
+  PRIMARY KEY (`department`, `Jobs_id`),
   CONSTRAINT `fk_Jobs2`
     FOREIGN KEY (`Jobs_id`)
     REFERENCES `mayank.sharma-CareerFair`.`Jobs` (`id`)
@@ -139,8 +140,9 @@ CREATE INDEX `fk_Job_allows_Department_idx` ON `mayank.sharma-CareerFair`.`JobAl
 DROP TABLE IF EXISTS `mayank.sharma-CareerFair`.`JobAllowsDegreeLevel` ;
 
 CREATE TABLE IF NOT EXISTS `mayank.sharma-CareerFair`.`JobAllowsDegreeLevel` (
-  `degree` VARCHAR(50) NOT NULL,
+  `degree` TINYINT(2) NOT NULL,
   `Jobs_id` INT NOT NULL,
+  PRIMARY KEY (`degree`, `Jobs_id`),
   CONSTRAINT `fk_Jobs1`
     FOREIGN KEY (`Jobs_id`)
     REFERENCES `mayank.sharma-CareerFair`.`Jobs` (`id`)
@@ -158,7 +160,7 @@ DROP TABLE IF EXISTS `mayank.sharma-CareerFair`.`Sponsorship` ;
 
 CREATE TABLE IF NOT EXISTS `mayank.sharma-CareerFair`.`Sponsorship` (
   `amount` FLOAT NOT NULL COMMENT 'in USD',
-  `category` INT(10) GENERATED ALWAYS AS (amount / 5000) VIRTUAL,
+  `category` INT(1) GENERATED ALWAYS AS (amount / 5000) VIRTUAL,
   `Company_id` INT NOT NULL,
   PRIMARY KEY (`Company_id`),
   CONSTRAINT `fk_Sponsorship_Company1`

@@ -29,6 +29,11 @@ if(isset($_POST['submitted']))
     <link href="util/css/style.css" rel="stylesheet" />
   </head>       
   <body>     
+    <?PHP 
+    if ($DebugMode) {
+        echo "<div><span class='error'>". $handler->GetErrorMessage() ."</span></div>";
+    }
+    ?>
 
     <div id='fg_membersite'>
     <form action='../'method='post'>
@@ -44,8 +49,7 @@ if(isset($_POST['submitted']))
     <input type='hidden' name='submitted' id='submitted' value='1'/>
 
     <div class='short_explanation'>*required fields </div>
-
-    <div><span class='error'><?php echo $handler->GetErrorMessage(); ?></span></div>
+    
     <div class='container'>
         <label for='name' >Your Full Name*: </label><br/>
         <input type='text' name='name' id='name' value='<?php echo $handler->SafeDisplay('name') ?>' maxlength="50" /><br/>

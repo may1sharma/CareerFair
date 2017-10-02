@@ -11,6 +11,11 @@
     <link href="css/style.css" rel="stylesheet" />
   </head>       
   <body>     
+    <!-- <?PHP 
+    if ($DebugMode) {
+        echo "<div><span class='error'>". $handler->GetErrorMessage() ."</span></div>";
+    }
+    ?> -->
 
     <h1>Register as a</h1>   
       <?php

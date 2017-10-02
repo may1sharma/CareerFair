@@ -6,6 +6,7 @@ $studentID = htmlspecialchars($_SESSION['studentID'] );
 $studentName = htmlspecialchars($_SESSION['studentName'] );
 $search_results = $handler->SearchJobs(htmlspecialchars($_SESSION['sDepartment'] ), 
     htmlspecialchars($_SESSION['sDegree'] ), htmlspecialchars($_SESSION['sIntl'] ));
+$appliedJobs = $handler->JobsApplied($studentID);
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
@@ -15,6 +16,11 @@ $search_results = $handler->SearchJobs(htmlspecialchars($_SESSION['sDepartment']
       <link rel="STYLESHEET" type="text/css" href="style/fg_membersite.css">
 </head>
 <body>
+    <?PHP 
+    if ($DebugMode) {
+        echo "<div><span class='error'>". $handler->GetErrorMessage() ."</span></div>";
+    }
+    ?>
 <div id='fg_membersite_content'>
 <h2>Thanks for registering! <?php echo $studentName; ?></h2>
 <form action='../'method='post'>
@@ -30,6 +36,7 @@ $search_results = $handler->SearchJobs(htmlspecialchars($_SESSION['sDepartment']
                 <td>Position</td>
                 <td>Booth</td>
                 <td>Location</td>
+                <td>Action</td>
             </tr>
             <?php
                 if (!is_null($search_results)) {
@@ -42,6 +49,11 @@ $search_results = $handler->SearchJobs(htmlspecialchars($_SESSION['sDepartment']
                        echo "<td>".$row['position']."</td>";
                        echo "<td>".$row['bID']."</td>";
                        echo "<td>".$row['location']."</td>";
+                       if (in_array($row['jID'], $appliedJobs)) {
+                            echo "<td>Applied</td>";
+                       } else {                         
+                            echo "<td><a href='apply?".$row['jID']."'>Apply</a></td>";
+                       }
                        echo "</tr>";
                        $i = ($i==0) ? 1:0;
                    }

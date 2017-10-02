@@ -329,7 +329,7 @@ class FairHandler
 
     function EnsureStudentTable()
     {
-        $result = mysqli_query($this->connection, "SHOW COLUMNS FROM STUDENT");   
+        $result = mysqli_query($this->connection, "SHOW COLUMNS FROM Student");   
         if(!$result || mysqli_num_rows($result) <= 0)
         {
             return $this->CreateStudentTable();
@@ -339,11 +339,11 @@ class FairHandler
     
     function CreateStudentTable()
     {
-        $qry = "Create Table STUDENT (".
+        $qry = "Create Table Student (".
                 "id INT NOT NULL AUTO_INCREMENT ,".
                 "name VARCHAR( 45 ) NOT NULL ,".
-                "department VARCHAR(45) NOT NULL,".
-                "degree_level VARCHAR(45) NOT NULL,".
+                "department TINYINT(2) NOT NULL,".
+                "degree_level TINYINT(2) NOT NULL,".
                 "isInternational BIT(1) NOT NULL DEFAULT 0,".
                 "PRIMARY KEY (id))".
                 ")";
@@ -358,7 +358,7 @@ class FairHandler
     
     function InsertStudent(&$formvars)
     {
-        $insert_query = 'insert into student(
+        $insert_query = 'insert into Student(
                 name,
                 department,
                 degree_level,
@@ -384,6 +384,44 @@ class FairHandler
 
         return true;
     }  
+
+    function InsertApplication($studentID, $jobID)
+    {
+        if(!$this->DBLogin())
+        {
+            $this->HandleError("Database login failed!");
+            return false;
+        }
+
+        $insert_query = 'INSERT INTO Application(Student_id, Jobs_id) VALUES (
+                ' . $studentID . ',
+                ' . $jobID . '
+                )';      
+        if(!mysqli_query($this->connection, $insert_query))
+        {
+            $this->HandleDBError("Error inserting data to the table\nquery:$insert_query");
+            return false;
+        } 
+
+        return true;
+    }
+
+    function JobsApplied($studentID)
+    {
+        $select_query = 'SELECT Jobs_id FROM Application WHERE Student_id = '.$studentID;
+        $response = mysqli_query($this->connection, $select_query);
+        if(!$response)
+        {
+            $this->HandleDBError("Error searching company info in DB \nquery:$select_query");
+            return null;
+        }                 
+
+        $appliedJobs = array(); 
+        while($row = mysqli_fetch_array($response)){ // loop to store the data in an associative array.
+            array_push($appliedJobs, $row[0]);
+        }
+        return $appliedJobs;
+    }
 
     //-------------------Company-----------------------
 
@@ -478,19 +516,19 @@ class FairHandler
 
     function EnsureCompanyTables()
     {
-        $result = mysqli_query($this->connection, "SHOW COLUMNS FROM BOOTH");   
+        $result = mysqli_query($this->connection, "SHOW COLUMNS FROM Booth");   
         if(!$result || mysqli_num_rows($result) <= 0)
         {
             return $this->CreateBoothTable();
         }
 
-        $result = mysqli_query($this->connection, "SHOW COLUMNS FROM COMPANY");   
+        $result = mysqli_query($this->connection, "SHOW COLUMNS FROM Company");   
         if(!$result || mysqli_num_rows($result) <= 0)
         {
             return $this->CreateCompanyTable();
         }
 
-        $result = mysqli_query($this->connection, "SHOW COLUMNS FROM SPONSORSHIP");   
+        $result = mysqli_query($this->connection, "SHOW COLUMNS FROM Sponsorship");   
         if(!$result || mysqli_num_rows($result) <= 0)
         {
             return $this->CreateSponsorshipTable();
@@ -500,10 +538,10 @@ class FairHandler
     
     function CreateBoothTable()
     {
-        $qry = "Create Table BOOTH (".
+        $qry = "Create Table Booth (".
                 "id INT NOT NULL AUTO_INCREMENT ,".
                 "location VARCHAR( 100 ) NOT NULL ,".
-                "size FLOAT UNSIGNED NULL DEFAULT 10 COMMENT 'in sqft',".
+                "size FLOAT UNSIGNED NULL DEFAULT 10.0 COMMENT 'in sqft',".
                 "PRIMARY KEY (id))".
                 ")";
                 
@@ -517,7 +555,7 @@ class FairHandler
     
     function CreateCompanyTable()
     {
-        $qry = "Create Table COMPANY (".
+        $qry = "Create Table Company (".
                 "id INT NOT NULL AUTO_INCREMENT,".
                 "name VARCHAR(45) NOT NULL,".
                 "Booth_id INT NOT NULL,".
@@ -539,9 +577,9 @@ class FairHandler
     
     function CreateSponsorshipTable()
     {
-        $qry = "Create Table SPONSORSHIP (".
+        $qry = "Create Table Sponsorship (".
                 "amount FLOAT NOT NULL COMMENT 'in USD',".
-                "category INT(10) GENERATED ALWAYS AS (amount / 5000) VIRTUAL,".
+                "category INT(1) GENERATED ALWAYS AS (amount / 5000) VIRTUAL,".
                 "Company_id INT NOT NULL,".
                 "PRIMARY KEY (Company_id),".
                 "CONSTRAINT fk_Sponsorship_Company1".
@@ -561,7 +599,7 @@ class FairHandler
     
     function InsertCompany(&$formvars)
     {
-        $insert_query = 'insert into booth(
+        $insert_query = 'insert into Booth(
                 location,
                 size
                 )
@@ -577,7 +615,7 @@ class FairHandler
         }  
         $boothID = mysqli_insert_id($this->connection);
 
-        $insert_query = 'insert into company(
+        $insert_query = 'insert into Company(
                 name,
                 Booth_id
                 )
@@ -595,7 +633,7 @@ class FairHandler
         $GLOBALS['companyID'] = mysqli_insert_id($this->connection);
         $GLOBALS['companyName'] = $formvars['name'];
 
-        $insert_query = 'insert into sponsorship(
+        $insert_query = 'insert into Sponsorship(
                 amount,
                 Company_id
                 )
@@ -620,7 +658,7 @@ class FairHandler
             return false;
         }
 
-        $check_query = 'SELECT company.id FROM company WHERE company.name = "'.$name.'"';
+        $check_query = 'SELECT id FROM Company WHERE name = "'.$name.'"';
         $response = mysqli_query($this->connection, $check_query);
         if(!mysqli_num_rows($response))
         {
@@ -641,9 +679,9 @@ class FairHandler
             return false;
         }
 
-        $check_query = 'SELECT booth.id as bID, booth.location, booth.size, sponsorship.amount, 
-            sponsorship.category FROM (company INNER JOIN booth ON company.Booth_id = booth.id) 
-            INNER JOIN sponsorship ON company.id = sponsorship.Company_id WHERE company.id = '.$id;
+        $check_query = 'SELECT Booth.id as bID, Booth.location, Booth.size, Sponsorship.amount, 
+            Sponsorship.category FROM (Company INNER JOIN Booth ON Company.Booth_id = Booth.id) 
+            INNER JOIN Sponsorship ON Company.id = Sponsorship.Company_id WHERE Company.id = '.$id;
         $response = mysqli_query($this->connection, $check_query);
         if(!$response)
         {
@@ -735,7 +773,7 @@ class FairHandler
 
     function EnsureJobTable()
     {
-        $result = mysqli_query($this->connection, "SHOW COLUMNS FROM JOBS");   
+        $result = mysqli_query($this->connection, "SHOW COLUMNS FROM Jobs");   
         if(!$result || mysqli_num_rows($result) <= 0)
         {
             return $this->CreateJobTable();
@@ -755,7 +793,7 @@ class FairHandler
     
     function CreateJobTable()
     {
-        $qry = "Create Table JOBS (".
+        $qry = "Create Table Jobs (".
                 "id INT NOT NULL AUTO_INCREMENT ,".
                 "position VARCHAR( 45 ) NOT NULL ,".
                 "allowsInternational BIT(1) NOT NULL DEFAULT 0,".
@@ -779,8 +817,9 @@ class FairHandler
     function CreateAllowedDepartmentTable()
     {
         $qry = "Create Table JobAllowsDepartment (".
-                "department VARCHAR( 50 ) NOT NULL ,".
+                "department TINYINT(2) NOT NULL ,".
                 "Jobs_id INT NOT NULL,".
+                "PRIMARY KEY (department, Jobs_id),".
                 "CONSTRAINT fk_Jobs2".
                 "FOREIGN KEY (Jobs_id)".
                 "REFERENCES ". $this->database.".Jobs (id)".
@@ -799,8 +838,9 @@ class FairHandler
     function CreateAllowedDegreeTable()
     {
         $qry = "Create Table JobAllowsDegreeLevel (".
-                "degree VARCHAR( 50 ) NOT NULL ,".
+                "degree TINYINT(2) NOT NULL ,".
                 "Jobs_id INT NOT NULL,".
+                "PRIMARY KEY (degree, Jobs_id),".
                 "CONSTRAINT fk_Jobs1".
                 "FOREIGN KEY (Jobs_id)".
                 "REFERENCES ". $this->database.".Jobs (id)".
@@ -923,7 +963,7 @@ class FairHandler
             return false;
         }
 
-        $update_query = 'UPDATE jobs SET position = "' . $formvars['position'] . '", 
+        $update_query = 'UPDATE Jobs SET position = "' . $formvars['position'] . '", 
                 allowsInternational = '.$formvars['intl'].'
                 WHERE id = ' . $formvars['jobID'] ;      
         if(!mysqli_query($this->connection, $update_query))
@@ -972,14 +1012,14 @@ class FairHandler
 
     function DeleteDeptDeg($jobID)
     {
-        $delete_query = 'DELETE FROM joballowsdepartment WHERE Jobs_id = '.$jobID;      
+        $delete_query = 'DELETE FROM JobAllowsDepartment WHERE Jobs_id = '.$jobID;      
         if(!mysqli_query($this->connection, $delete_query))
         {
             $this->HandleDBError("Error deleting data from the table\nquery:$delete_query");
             return false;
         }         
 
-        $delete_query = 'DELETE FROM joballowsdegreelevel WHERE Jobs_id = '.$jobID;      
+        $delete_query = 'DELETE FROM JobAllowsDegreeLevel WHERE Jobs_id = '.$jobID;      
         if(!mysqli_query($this->connection, $delete_query))
         {
             $this->HandleDBError("Error deleting data from the table\nquery:$delete_query");
@@ -1016,7 +1056,7 @@ class FairHandler
     {
         
 
-        $select_query = 'SELECT id as jID, position, allowsInternational as intl FROM jobs WHERE jobs.Company_id = '.$companyID;
+        $select_query = 'SELECT id as jID, position, allowsInternational as intl FROM Jobs WHERE Jobs.Company_id = '.$companyID;
         $response = mysqli_query($this->connection, $select_query);
         if(!$response)
         {
@@ -1034,7 +1074,7 @@ class FairHandler
         //     return false;
         // }
 
-        $select_query = 'SELECT department FROM joballowsdepartment WHERE Jobs_id = '.$jobID;
+        $select_query = 'SELECT department FROM JobAllowsDepartment WHERE Jobs_id = '.$jobID;
         $response = mysqli_query($this->connection, $select_query);
         if(!$response)
         {
@@ -1052,7 +1092,7 @@ class FairHandler
         //     return false;
         // }
 
-        $select_query = 'SELECT degree FROM joballowsdegreelevel WHERE Jobs_id = '.$jobID;
+        $select_query = 'SELECT degree FROM JobAllowsDegreeLevel WHERE Jobs_id = '.$jobID;
         $response = mysqli_query($this->connection, $select_query);
         if(!$response)
         {
@@ -1072,14 +1112,14 @@ class FairHandler
             return false;
         }
 
-        $search_query = 'SELECT jobs.id as jID, company.name as cName, jobs.position, booth.id as bID, booth.location FROM 
-            ((jobs INNER JOIN joballowsdepartment ON jobs.id = joballowsdepartment.Jobs_id) 
-            INNER JOIN joballowsdegreelevel ON jobs.id = joballowsdegreelevel.Jobs_id) 
-            INNER JOIN (company INNER JOIN booth ON company.Booth_id = booth.id) 
-            ON jobs.Company_id = company.id WHERE 
-            joballowsdepartment.department = '. $department .
-            ' and joballowsdegreelevel.degree = '. $degree. 
-            ' and jobs.allowsInternational = '. $intl ;
+        $search_query = 'SELECT Jobs.id as jID, Company.name as cName, Jobs.position, Booth.id as bID, Booth.location FROM 
+            ((Jobs INNER JOIN JobAllowsDepartment ON Jobs.id = JobAllowsDepartment.Jobs_id) 
+            INNER JOIN JobAllowsDegreeLevel ON Jobs.id = JobAllowsDegreeLevel.Jobs_id) 
+            INNER JOIN (Company INNER JOIN Booth ON Company.Booth_id = Booth.id) 
+            ON Jobs.Company_id = Company.id WHERE 
+            JobAllowsDepartment.department = '. $department .
+            ' and JobAllowsDegreeLevel.degree = '. $degree. 
+            ' and Jobs.allowsInternational = '. $intl ;
 
         $response = mysqli_query($this->connection, $search_query);
         if(!$response)

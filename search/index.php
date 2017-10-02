@@ -20,6 +20,11 @@ if(isset($_POST['submitted']))
     <link href="util/css/style.css" rel="stylesheet" />
   </head>       
   <body>     
+    <?PHP 
+    if ($DebugMode) {
+        echo "<div><span class='error'>". $handler->GetErrorMessage() ."</span></div>";
+    }
+    ?>
 
     <div id='fg_membersite'>
 
@@ -34,8 +39,6 @@ if(isset($_POST['submitted']))
     </h2>
 
     <input type='hidden' name='submitted' id='submitted' value='1'/>
-
-    <div><span class='error'><?php echo $handler->GetErrorMessage(); ?></span></div>
     
     <div class='container'>
         <label for='department' >Department:</label><br/>
