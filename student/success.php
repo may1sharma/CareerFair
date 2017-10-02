@@ -13,7 +13,9 @@ $appliedJobs = $handler->JobsApplied($studentID);
 <head>
       <meta http-equiv='Content-Type' content='text/html; charset=utf-8'/>
       <title>Thank you!</title>
-      <link rel="STYLESHEET" type="text/css" href="style/fg_membersite.css">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 <body>
     <?PHP 
@@ -21,22 +23,34 @@ $appliedJobs = $handler->JobsApplied($studentID);
         echo "<div><span class='error'>". $handler->GetErrorMessage() ."</span></div>";
     }
     ?>
-<div id='fg_membersite_content'>
-<h2>Thanks for registering! <?php echo $studentName; ?></h2>
-<form action='../'method='post'>
-<input type='submit' name='Home' value='Home' />
-</form>
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="../">Career Fair</a>
+        </div>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="../">Home</a></li>
+          <li><a href="../search">Job Search</a></li>
+          <li class="active"><a href="../student">Students</a></li>
+          <li><a href="../company">Companies</a></li>
+        </ul>
+      </div>
+    </nav>
 
-<h2> Here are some Jobs that might interest you: </h2>
-<div class='container'>   
-        <table class="striped">
+<div class='container'> <div class='container'>
+<h2>Thanks for Registering! <?php echo $studentName; ?></h2>
+
+<h3> <legend>Here are some Jobs that might interest you: </legend></h3>
+
+
+        <table class="table table-striped">
             <tr class="header">
-                <td>Job Id</td>
-                <td>Company</td>
-                <td>Position</td>
-                <td>Booth</td>
-                <td>Location</td>
-                <td>Action</td>
+                <th>Job Id</th>
+                <th>Company</th>
+                <th>Position</th>
+                <th>Booth</th>
+                <th>Location</th>
+                <th>Action</th>
             </tr>
             <?php
                 if (!is_null($search_results)) {

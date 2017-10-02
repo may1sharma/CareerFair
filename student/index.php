@@ -23,10 +23,9 @@ if(isset($_POST['submitted']))
     <title>Career Fair</title>       
     <meta http-equiv="content-type"       
         content="text/html; charset=utf-8"/>       
-    <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,700" rel="stylesheet">
-    <link rel="STYLESHEET" type="text/css" href="util/css/fg_membersite.css" />
-    <!-- The main CSS file -->
-    <link href="util/css/style.css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   </head>       
   <body>     
     <?PHP 
@@ -34,71 +33,81 @@ if(isset($_POST['submitted']))
         echo "<div><span class='error'>". $handler->GetErrorMessage() ."</span></div>";
     }
     ?>
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="../">Career Fair</a>
+        </div>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="../">Home</a></li>
+          <li><a href="../search">Job Search</a></li>
+          <li class="active"><a href="../student">Students</a></li>
+          <li><a href="../company">Companies</a></li>
+        </ul>
+      </div>
+    </nav>
 
-    <div id='fg_membersite'>
-    <form action='../'method='post'>
-        <input type='submit' name='Home' value='Home' />
-    </form>
+    <div class="row">
+    <div class="col-sm-3">
+    </div>
+    <div class="col-sm-6">
 
-    <form id='register' action='' method='post' accept-charset='UTF-8'>
+    <div class='container'>    
+
     <fieldset >
     <h2> 
-      <legend>Register</legend>
-    </h2>
-
+      Student Registration
+    </h2><br/>
+    <div class='container'> 
     <input type='hidden' name='submitted' id='submitted' value='1'/>
 
-    <div class='short_explanation'>*required fields </div>
+    <form class='form-inline'id='register' action='' method='post' accept-charset='UTF-8'>
+    <div class='short_explanation'>*required </div><br/>
     
     <div class='container'>
         <label for='name' >Your Full Name*: </label><br/>
-        <input type='text' name='name' id='name' value='<?php echo $handler->SafeDisplay('name') ?>' maxlength="50" /><br/>
+        <input class="form-control" type='text' name='name' id='name' value='<?php echo $handler->SafeDisplay('name') ?>' /><br/>
         <span id='register_name_errorloc' class='error'></span>
-    </div>
+    </div><br/>
     <div class='container'>
         <label for='department' >Department*:</label><br/>
-        <select name='department' id='department'>
-            <option value=0>Select Department</option>
-            <option value=1>Computer Science</option>
-            <option value=2>Computer Engineering</option>
-            <option value=3>Electronics</option>
-            <option value=4>Mechanical</option>
-            <option value=5>Civil</option>
-            <option value=6>Chemical</option>
-            <option value=7>Performing Arts</option>
-            <option value=8>Mathematics</option>
-            <option value=9>Psychology</option>
+        <select class="form-control" name='department' id='department'>
+            <?php
+            for ($i=0; $i < count($Department_List); $i++) { 
+                echo '<option value='.$i.'>'.$Department_List[$i].'</option>';
+            }
+            ?>
         </select><br/>
         <span id='register_department_errorloc' class='error'></span>
-    </div>
+    </div><br/>
     <div class='container'>
         <label for='degree' >Degree Level*:</label><br/>
-        <select name='degree' id='degree'> 
-            <option value=0>Select Degree</option>
-            <option value=1>Freshmen</option>
-            <option value=2>Sophomores</option>
-            <option value=3>Juniors</option>
-            <option value=4>Seniors</option>
-            <option value=5>Masters</option>
-            <option value=6>PhD</option>
+        <select class="form-control" name='degree' id='degree'> 
+            <?php
+            for ($i=0; $i < count($Degree_Level_List); $i++) { 
+                echo '<option value='.$i.'>'.$Degree_Level_List[$i].'</option>';
+            }
+            ?>
         </select><br/>
         <span id='register_degree_errorloc' class='error'></span>
-    </div>
+    </div><br/>
     
     <div class='container'>
         <label for='intl' >Are you an International Student?*</label><br/>
-        <select name='intl' id='intl'>
+        <select class="form-control" name='intl' id='intl'>
             <option value=0>No</option>
             <option value=1>Yes</option>
         </select><br/>
         <span id='register_international_errorloc' class='error'></span>
     </div>
-
+<br/>
     <div class='container'>
-        <input type='submit' name='Submit' value='Submit' />
+    <button type="submit" class="btn btn-default">Submit</button>
     </div>
-
     </fieldset>
     </form>     
+    </div>
+    <div class="col-sm-2">
+    </div>
   </body>       
 </html>

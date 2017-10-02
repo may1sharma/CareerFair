@@ -1,5 +1,5 @@
-<div id='fg_membersite'>
-    <form id='register' action='' method='post' accept-charset='UTF-8'>
+<div class='container'>
+    <form class="form-inline" id='register' action='' method='post' accept-charset='UTF-8'>
     <fieldset >
     <h2> 
       <legend>Add new Job Posting</legend>
@@ -7,27 +7,38 @@
 
     <input type='hidden' name='submitted' id='submitted' value='1'/>
 
-    <div class='short_explanation'>*required fields </div>
+    <div class='short_explanation'>*required </div>
 
-    <div class='container'>
+    <div class='form-group'>
         <label for='position' >Position*: </label><br/>
-        <input type='text' name='position' id='position' value='<?php echo $handler->SafeDisplay('position') ?>' maxlength="50" /><br/>
+        <input class="form-control" type='text' name='position' id='position' value='<?php echo $handler->SafeDisplay('position') ?>' maxlength="50" /><br/>
         <span id='register_position_errorloc' class='error'></span>
     </div>
-    <div class='container'>
+    
+    <div class='form-group'>
+        <label for='intl' >Can International Students apply?*</label><br/>
+        <select class="form-control" name='intl' id='intl'>
+            <option value=0>No</option>
+            <option value=1>Yes</option>
+        </select><br/>
+        <span id='register_allowIntl_errorloc' class='error'></span>
+    </div>
+    <br/>
+    <div class='form-group'>
         <label for='jtype' >Job type*</label><br/>
-        <select name='jtype' id='jtype'>
+        <select class="form-control" name='jtype' id='jtype'>
             <option value=0>Full Time</option>
             <option value=1>Part Time</option>
             <option value=2>Internship</option>
         </select><br/>
         <span id='register_allowIntl_errorloc' class='error'></span>
     </div>
-    <div class='container'>
+
+    <div class='form-group'>
         <label for='degree_check_list[]' >Required Degree Level*: 
         </label><br/>
         <?PHP for ($i = 1; $i < count($Degree_Level_List); $i++) {
-            echo '<input type="checkbox" name="degree_check_list[]" value="'.$i.'">
+            echo '<input class="form-group" type="checkbox" name="degree_check_list[]" value="'.$i.'">
                 <label>'.$Degree_Level_List[$i].'</label><br/>';
         } ?>
         <!-- <input type="checkbox" name="degree_check_list[]" value="1"><label>Freshmen</label><br/>
@@ -38,10 +49,11 @@
         <input type="checkbox" name="degree_check_list[]" value="6"><label>PhD</label><br/> -->
         <span id='register_degree_errorloc' class='error'></span>
     </div>
-    <div class='container'>
+    
+    <div class='form-group'>
         <label for='dept_check_list[]' >Open for Departments*: </label><br/>
         <?PHP for ($i = 1; $i < count($Department_List); $i++) {
-            echo '<input type="checkbox" name="dept_check_list[]" value="'.$i.'">
+            echo '<input class="form-group" type="checkbox" name="dept_check_list[]" value="'.$i.'">
                 <label>'.$Department_List[$i].'</label><br/>';
         } ?>
         <!-- <input type="checkbox" name="dept_check_list[]" value="1"><label>Computer Science</label><br/>
@@ -55,17 +67,10 @@
         <input type="checkbox" name="dept_check_list[]" value="9"><label>Psychology</label><br/> -->
         <span id='register_degree_errorloc' class='error'></span>
     </div>
-    <div class='container'>
-        <label for='intl' >Can International Students apply?*</label><br/>
-        <select name='intl' id='intl'>
-            <option value=0>No</option>
-            <option value=1>Yes</option>
-        </select><br/>
-        <span id='register_allowIntl_errorloc' class='error'></span>
-    </div>
-
-    <div class='container'>
-        <input type='submit' name='Submit' value='Submit' />
+    
+    <br/>
+    <div class='form-group'>
+        <button type="submit" class="btn btn-default">Submit</button>
     </div>
 
     </fieldset>

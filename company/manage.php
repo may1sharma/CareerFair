@@ -13,7 +13,9 @@ $jobs = $handler->getJobs($companyID);
 <head>
       <meta http-equiv='Content-Type' content='text/html; charset=utf-8'/>
       <title>Career Fair</title>
-      <link rel="STYLESHEET" type="text/css" href="style/fg_membersite.css">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 <body>
     <?PHP 
@@ -21,22 +23,37 @@ $jobs = $handler->getJobs($companyID);
         echo "<div><span class='error'>". $handler->GetErrorMessage() ."</span></div>";
     }
     ?>
-<div id='fg_membersite_content'>
-<h2>Welcome <?php echo $companyName; ?></h2>
-<form action='../'method='post'>
-<input type='submit' name='Home' value='Home' />
-</form>
-</div>
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="../">Career Fair</a>
+        </div>
+        <ul class="nav navbar-nav">
+          <li class="active"><a href="manage">Manage Jobs</a></li>
+          <li><a href="success">Add New Job</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="../">Home</a></li>
+          <li><a href="../search">Job Search</a></li>
+          <li><a href="../student">Students</a></li>
+          <li><a href="../company">Companies</a></li>
+        </ul>
+      </div>
+    </nav>
 
+<div class='container'>
+<h2>Welcome <?php echo $companyName; ?></h2>
+<h3><legend>Details</legend></h3>
+</div>
 <fieldset>
 	<div class='container'>   
-        <table class="striped">
+        <table class="table table-striped">
             <tr class="header">
-                <td>Booth Number</td>
-                <td>Location</td>
-                <td>Space Allocated</td>
-                <td>Sponsorship Amount</td>
-                <td>Category</td>
+                <th>Booth Number</th>
+                <th>Location</th>
+                <th>Space Allocated</th>
+                <th>Sponsorship Amount</th>
+                <th>Category</th>
             </tr>
             <?php
                 if (!is_null($info)) {
@@ -60,17 +77,19 @@ $jobs = $handler->getJobs($companyID);
         </table>
     </div>
 </fieldset>
-
+<div class='container'>
+<h3><legend>Job Postings</legend></h3>
+</div>
 <fieldset>
 	<div class='container'>   
-        <table class="striped">
+        <table class="table table-striped">
             <tr class="header">
-                <td>Job Id</td>
-                <td>Position</td>
-                <td>International Students</td>
-                <td>Departments</td>
-                <td>Degree Level</td>
-                <td>Modify</td>
+                <th>Job Id</th>
+                <th>Position</th>
+                <th>International Students</th>
+                <th>Departments</th>
+                <th>Degree Level</th>
+                <th>Modify</th>
             </tr>
             <?php
                 if (!is_null($jobs)) {
@@ -84,27 +103,27 @@ $jobs = $handler->getJobs($companyID);
                        if ($row['intl'] == 1) echo "<td>Allowed</td>";
                        else echo "<td>Not Allowed</td>";
 
-					   	$departments = "<td>";
-					   	$query = $handler->getDepartments($row['jID']);
-					   	if (!is_null($query)) {
-						   	while ($dept = mysqli_fetch_array($query)) 
-						   	{
-	                       		$departments .= $Department_List[$dept['department']].", ";
-	                       	}
-	                       	$departments = rtrim(trim($departments),',');
-                   		}
-                       	$departments .= "</td>";
-                       	echo $departments;
+          					   	$departments = "<td>";
+          					   	$query = $handler->getDepartments($row['jID']);
+          					   	if (!is_null($query)) {
+                  						   	while ($dept = mysqli_fetch_array($query)) 
+                  						   	{
+          	                       		$departments .= $Department_List[$dept['department']].", ";
+          	                       	}
+          	                       	$departments = rtrim(trim($departments),',');
+                             	  	}
+                                 	$departments .= "</td>";
+                                 	echo $departments;
 
                        $degrees = "<td>";
                        $query = $handler->getDegrees($row['jID']);
                        if (!is_null($query)) {
-						   	while ($deg = mysqli_fetch_array($query)) 
-						   	{
+        						   	while ($deg = mysqli_fetch_array($query)) 
+        						   	{
 	                       		$degrees .= $Degree_Level_List[$deg['degree']].", ";
 	                       	}
 	                       	$degrees = rtrim(trim($degrees),',');
-	                   }
+	                     }
                        $degrees .= "</td>";
                        echo $degrees;
 
