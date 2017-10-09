@@ -10,6 +10,7 @@ $handler->InitDB(
 				  /*hostname*/'localhost:3307',
                   // 'mayank.sharma',  
                   /*username*/'root',
+                  //BlaBla123
                   /*password*/'',
                   /*database name*/'mayank.sharma-CareerFair',
                   /*table name*/'student');

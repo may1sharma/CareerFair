@@ -16,6 +16,7 @@ if(isset($_POST['submitted']))
         content="text/html; charset=utf-8"/>       
     <meta name="viewport" content="width=device-width, initial-scale=1">
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   </head>       
   <body>     
@@ -24,16 +25,16 @@ if(isset($_POST['submitted']))
         echo "<div><span class='error'>". $handler->GetErrorMessage() ."</span></div>";
     }
     ?>
-    <nav class="navbar navbar-default">
+    <nav class="navbar navbar-default" style="background-color: #660000; color: white;">
       <div class="container-fluid">
         <div class="navbar-header">
-          <a class="navbar-brand" href="../">Career Fair</a>
+          <a class="navbar-brand" href="../" style="background-color: #660000; color: white;">Career Fair</a>
         </div>
         <ul class="nav navbar-nav navbar-right">
-          <li><a href="../">Home</a></li>
-          <li class="active"><a href="../search">Job Search</a></li>
-          <li><a href="../student">Students</a></li>
-          <li><a href="../company">Companies</a></li>
+          <li><a href="../" style="background-color: #660000; color: white;">Home</a></li>
+          <li class="active"><a href="../search" >Job Search</a></li>
+          <li><a href="../student" style="background-color: #660000; color: white;">Students</a></li>
+          <li><a href="../company" style="background-color: #660000; color: white;">Companies</a></li>
         </ul>
       </div>
     </nav>
@@ -48,7 +49,7 @@ if(isset($_POST['submitted']))
     <form class="form-inline" id='register' action='' method='post' accept-charset='UTF-8'>
     <input type='hidden' name='submitted' id='submitted' value='1'/>
     
-    <div class='form-group'>
+    <div class='form-group col-md-3'>
         <label for='department' >Department:</label><br/>
         <select class="form-control" name='department' id='department'>
             <?php
@@ -59,7 +60,7 @@ if(isset($_POST['submitted']))
         </select><br/>
         <span id='register_department_errorloc' class='error'></span>
     </div>
-    <div class='form-group'>
+    <div class='form-group col-md-3'>
         <label for='degree' >Degree Level:</label><br/>
         <select class="form-control" name='degree' id='degree'> 
             <?php
@@ -71,7 +72,7 @@ if(isset($_POST['submitted']))
         <span id='register_degree_errorloc' class='error'></span>
     </div>
     
-    <div class='form-group'>
+    <div class='form-group col-md-3'>
         <label for='intl' >International Student Filter</label><br/>
         <select class="form-control" name='intl' id='intl'>
             <option value=0>No</option>
@@ -79,8 +80,9 @@ if(isset($_POST['submitted']))
         </select><br/>
         <span id='register_international_errorloc' class='error'></span>
     </div>
-    <div class='form-group'>
-        <button type="submit" class="btn btn-default">Submit</button>
+    <div class='form-group col-md-3'>
+      <br/>
+        <button type="submit" class="btn btn-success">Submit</button>
     </div>
     </fieldset>
     </form>  

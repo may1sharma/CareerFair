@@ -15,6 +15,7 @@ $jobs = $handler->getJobs($companyID);
       <title>Career Fair</title>
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 <body>
@@ -23,20 +24,20 @@ $jobs = $handler->getJobs($companyID);
         echo "<div><span class='error'>". $handler->GetErrorMessage() ."</span></div>";
     }
     ?>
-    <nav class="navbar navbar-default">
-      <div class="container-fluid">
-        <div class="navbar-header">
-          <a class="navbar-brand" href="../">Career Fair</a>
+    <nav class="navbar navbar-default" style="background-color: #660000; color: white;">
+      <div class="container-fluid" style="background-color: #660000; color: white;">
+        <div class="navbar-header" >
+          <a class="navbar-brand" href="../" style="background-color: #660000; color: white;">Career Fair</a>
         </div>
-        <ul class="nav navbar-nav">
-          <li class="active"><a href="manage">Manage Jobs</a></li>
-          <li><a href="success">Add New Job</a></li>
+        <ul class="nav navbar-nav"  style="background-color: #660000; color: white;">
+          <li class="active" style="background-color: #660000; color: white;"><a href="manage">Manage Jobs</a></li>
+          <li><a href="success" style="background-color: #660000; color: white;">Add New Job</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
-          <li><a href="../">Home</a></li>
-          <li><a href="../search">Job Search</a></li>
-          <li><a href="../student">Students</a></li>
-          <li><a href="../company">Companies</a></li>
+          <li><a href="../" style="background-color: #660000; color: white;">Home</a></li>
+          <li><a href="../search" style="background-color: #660000; color: white;">Job Search</a></li>
+          <li><a href="../student" style="background-color: #660000; color: white;">Students</a></li>
+          <li><a href="../company" style="background-color: #660000; color: white;">Companies</a></li>
         </ul>
       </div>
     </nav>
@@ -127,8 +128,8 @@ $jobs = $handler->getJobs($companyID);
                        $degrees .= "</td>";
                        echo $degrees;
 
-                       echo "<td><a href='edit_job?".$row['jID']."'>Edit</a>  
-                        <a href='delete_job?".$row['jID']."'>Delete</a></td>";
+                       echo '<td><a href="edit_job?'.$row['jID'].'">Edit</a>  
+                        <a href="delete_job?'.$row['jID'].'" onclick="return confirm("Are you sure?");">Delete</a></td>';
                        
                        echo "</tr>";
                        $i = ($i==0) ? 1:0;
@@ -136,8 +137,11 @@ $jobs = $handler->getJobs($companyID);
                 }
             ?>
         </table>
+
     </div>
 </fieldset>
+
+
 
 </body>
 </html>

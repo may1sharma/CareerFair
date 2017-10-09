@@ -6,12 +6,10 @@ $companyName = htmlspecialchars($_SESSION['companyName'] );
 $jobID = htmlspecialchars($_SERVER['QUERY_STRING']);
 
 //TODO confirm delete operation 
-
-
 if($handler->DeletePosting($jobID))
-{
-    //TODO Success Notification 
-    $handler->RedirectToURL("manage");
-}
-
+ {
+     //TODO Success Notification 
+     $handler->RedirectToURL("manage");
+ }
+ 
 ?>

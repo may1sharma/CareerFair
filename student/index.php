@@ -1,8 +1,10 @@
 <?PHP
 require_once("/../util/config.php");
 session_start();
+    
 if(isset($_POST['submitted']))
 {
+    
    if($handler->RegisterStudent())
    {
         $_SESSION['studentID'] = $GLOBALS['studentID'];
@@ -25,6 +27,7 @@ if(isset($_POST['submitted']))
         content="text/html; charset=utf-8"/>       
     <meta name="viewport" content="width=device-width, initial-scale=1">
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   </head>       
   <body>     
@@ -33,24 +36,24 @@ if(isset($_POST['submitted']))
         echo "<div><span class='error'>". $handler->GetErrorMessage() ."</span></div>";
     }
     ?>
-    <nav class="navbar navbar-default">
-      <div class="container-fluid">
+    <nav class="navbar navbar-default" style="background-color: #660000; color: white;">
+      <div class="container-fluid" style="background-color: #660000; color: white;">
         <div class="navbar-header">
-          <a class="navbar-brand" href="../">Career Fair</a>
+          <a class="navbar-brand" href="../" style="background-color: #660000; color: white;">Career Fair</a>
         </div>
         <ul class="nav navbar-nav navbar-right">
-          <li><a href="../">Home</a></li>
-          <li><a href="../search">Job Search</a></li>
-          <li class="active"><a href="../student">Students</a></li>
-          <li><a href="../company">Companies</a></li>
+          <li><a href="../" style="background-color: #660000; color: white;">Home</a></li>
+          <li><a href="../search" style="background-color: #660000; color: white;">Job Search</a></li>
+          <li class="active" style="background-color: #660000; color: white;"><a href="../student">Students</a></li>
+          <li><a href="../company" style="background-color: #660000; color: white;">Companies</a></li>
         </ul>
       </div>
     </nav>
 
     <div class="row">
-    <div class="col-sm-3">
+    <div class="col-md-3">
     </div>
-    <div class="col-sm-6">
+    <div class="col-md-4">
 
     <div class='container'>    
 
@@ -59,14 +62,14 @@ if(isset($_POST['submitted']))
       Student Registration
     </h2><br/>
     <div class='container'> 
-    <input type='hidden' name='submitted' id='submitted' value='1'/>
 
     <form class='form-inline'id='register' action='' method='post' accept-charset='UTF-8'>
+        <input type='hidden' name='submitted' id='submitted' value='1'/>
     <div class='short_explanation'>*required </div><br/>
     
     <div class='container'>
         <label for='name' >Your Full Name*: </label><br/>
-        <input class="form-control" type='text' name='name' id='name' value='<?php echo $handler->SafeDisplay('name') ?>' /><br/>
+        <input class="form-control" type='text' size="40" name='name' id='name' value='<?php echo $handler->SafeDisplay('name') ?>' /><br/>
         <span id='register_name_errorloc' class='error'></span>
     </div><br/>
     <div class='container'>
@@ -100,14 +103,13 @@ if(isset($_POST['submitted']))
         </select><br/>
         <span id='register_international_errorloc' class='error'></span>
     </div>
-<br/>
-    <div class='container'>
-    <button type="submit" class="btn btn-default">Submit</button>
+    <br/> 
+    <div class='container col-md-6'>
+        <button type="submit" class="btn btn-primary"> Submit</button>
     </div>
     </fieldset>
     </form>     
     </div>
-    <div class="col-sm-2">
-    </div>
+    
   </body>       
 </html>

@@ -36,6 +36,7 @@ if(isset($_POST['submitted']))
         content="text/html; charset=utf-8"/>       
     <meta name="viewport" content="width=device-width, initial-scale=1">
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
   </head>       
@@ -46,16 +47,16 @@ if(isset($_POST['submitted']))
         echo "<div><span class='error'>". $handler->GetErrorMessage() ."</span></div>";
     }
     ?>
-    <nav class="navbar navbar-default">
+    <nav class="navbar navbar-default" style="background-color: #660000;">
       <div class="container-fluid">
         <div class="navbar-header">
-          <a class="navbar-brand" href="../">Career Fair</a>
+          <a class="navbar-brand" href="../"  style="background-color: #660000; color: white;">Career Fair</a>
         </div>
         <ul class="nav navbar-nav navbar-right">
-          <li><a href="../">Home</a></li>
-          <li><a href="../search">Job Search</a></li>
-          <li><a href="../student">Students</a></li>
-          <li class="active"><a href="../company">Companies</a></li>
+          <li><a href="../" style="background-color: #660000; color: white;">Home</a></li>
+          <li><a href="../search"  style="background-color: #660000; color: white;">Job Search</a></li>
+          <li><a href="../student" style="background-color: #660000; color: white;">Students</a></li>
+          <li class="active"><a href="../company" >Companies</a></li>
         </ul>
       </div>
     </nav>
@@ -77,7 +78,7 @@ if(isset($_POST['submitted']))
     </div>
     <br/>
     <div class='container'>
-        <button type="submit" class="btn btn-default" name='in' >Log In</button>
+        <button type="submit" class="btn btn-primary" name='in' >Log In</button>
     </div>
     </form>
     </fieldset>
@@ -119,7 +120,7 @@ if(isset($_POST['submitted']))
     </div>
     <br/>
     <div class='container'>
-        <button type="submit" class="btn btn-default" name='Submit'>Submit</button>
+        <button type="submit" class="btn btn-primary" name='Submit'>Submit</button>
     </div>
 
     </fieldset>
