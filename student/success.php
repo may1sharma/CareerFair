@@ -1,5 +1,5 @@
 <?PHP
-require_once("/../util/config.php");
+require_once("../util/config.php");
 session_start();
 
 $studentID = htmlspecialchars($_SESSION['studentID'] );
@@ -67,7 +67,7 @@ $appliedJobs = $handler->JobsApplied($studentID);
                        if (in_array($row['jID'], $appliedJobs)) {
                             echo "<td>Applied</td>";
                        } else {                         
-                            echo "<td><a href='apply?".$row['jID']."'>Apply</a></td>";
+                            echo "<td><a href='apply.php?".$row['jID']."'>Apply</a></td>";
                        }
                        echo "</tr>";
                        $i = ($i==0) ? 1:0;

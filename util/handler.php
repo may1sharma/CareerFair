@@ -60,7 +60,7 @@ class FairHandler
     
     function HandleDBError($err)
     {
-        $this->HandleError($err."\r\n mysqlerror:".mysql_error());
+        $this->HandleError($err);
     }
 
     function SetRandomKey($key)
@@ -1042,7 +1042,7 @@ class FairHandler
             return false;
         }
 
-        $delete_query = 'DELETE FROM jobs WHERE id = '.$jobID;      
+        $delete_query = 'DELETE FROM Jobs WHERE id = '.$jobID;      
         if(!mysqli_query($this->connection, $delete_query))
         {
             $this->HandleDBError("Error deleting data from the table\nquery:$delete_query");

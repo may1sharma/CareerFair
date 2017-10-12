@@ -1,5 +1,5 @@
 <?PHP
-require_once("/../util/config.php");
+require_once("../util/config.php");
 session_start();
 $companyID = htmlspecialchars($_SESSION['companyID'] );
 $companyName = htmlspecialchars($_SESSION['companyName'] );
@@ -9,7 +9,7 @@ if(isset($_POST['submitted']))
    if($handler->AddPosting())
    {
         //Todo Success Notification
-        $handler->RedirectToURL("manage");
+        $handler->RedirectToURL("manage.php");
    }
 }
 
@@ -36,8 +36,8 @@ if(isset($_POST['submitted']))
           <a class="navbar-brand" href="../" style="background-color: #660000; color: white;">Career Fair</a>
         </div>
         <ul class="nav navbar-nav" style="background-color: #660000; color: white;">
-          <li ><a href="manage" style="background-color: #660000; color: white;">Manage Jobs</a></li>
-          <li class="active" style="background-color: #660000; color: white;"><a href="success">Add New Job</a></li>
+          <li ><a href="manage.php" style="background-color: #660000; color: white;">Manage Jobs</a></li>
+          <li class="active" style="background-color: #660000; color: white;"><a href="success.php">Add New Job</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right" style="background-color: #660000; color: white;">
           <li><a href="../" style="background-color: #660000; color: white;">Home</a></li>

@@ -1,5 +1,5 @@
 <?PHP
-require_once("/../util/config.php");
+require_once("../util/config.php");
 session_start();
 $companyID = htmlspecialchars($_SESSION['companyID'] );
 $companyName = htmlspecialchars($_SESSION['companyName'] );
@@ -30,8 +30,8 @@ $jobs = $handler->getJobs($companyID);
           <a class="navbar-brand" href="../" style="background-color: #660000; color: white;">Career Fair</a>
         </div>
         <ul class="nav navbar-nav"  style="background-color: #660000; color: white;">
-          <li class="active" style="background-color: #660000; color: white;"><a href="manage">Manage Jobs</a></li>
-          <li><a href="success" style="background-color: #660000; color: white;">Add New Job</a></li>
+          <li class="active" style="background-color: #660000; color: white;"><a href="manage.php">Manage Jobs</a></li>
+          <li><a href="success.php" style="background-color: #660000; color: white;">Add New Job</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
           <li><a href="../" style="background-color: #660000; color: white;">Home</a></li>
@@ -128,8 +128,8 @@ $jobs = $handler->getJobs($companyID);
                        $degrees .= "</td>";
                        echo $degrees;
 
-                       echo '<td><a href="edit_job?'.$row['jID'].'">Edit</a>  
-                        <a href="delete_job?'.$row['jID'].'" onclick="return confirm("Are you sure?");">Delete</a></td>';
+                       echo '<td><a href="edit_job.php?'.$row['jID'].'">Edit</a>  
+                        <a href="delete_job.php?'.$row['jID'].'" onclick="return confirm("Are you sure?");">Delete</a></td>';
                        
                        echo "</tr>";
                        $i = ($i==0) ? 1:0;

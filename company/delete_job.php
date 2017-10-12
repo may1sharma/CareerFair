@@ -1,5 +1,5 @@
 <?PHP
-require_once("/../util/config.php");
+require_once("../util/config.php");
 session_start();
 $companyID = htmlspecialchars($_SESSION['companyID'] );
 $companyName = htmlspecialchars($_SESSION['companyName'] );
@@ -9,7 +9,7 @@ $jobID = htmlspecialchars($_SERVER['QUERY_STRING']);
 if($handler->DeletePosting($jobID))
  {
      //TODO Success Notification 
-     $handler->RedirectToURL("manage");
+     $handler->RedirectToURL("manage.php");
  }
  
 ?>

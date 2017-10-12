@@ -1,5 +1,5 @@
 <?PHP
-require_once("/../util/config.php");
+require_once("../util/config.php");
 session_start();
 
 if(isset($_POST['loggedin']))
@@ -10,7 +10,7 @@ if(isset($_POST['loggedin']))
         $_SESSION['companyName'] = $GLOBALS['companyName'];
 
         //Todo Registration Success Notification
-        $handler->RedirectToURL("manage");
+        $handler->RedirectToURL("manage.php");
    } else {
         echo "First Things First. Register yourself ".$_POST['cName'];
    }
@@ -22,7 +22,7 @@ if(isset($_POST['submitted']))
    {
         $_SESSION['companyID'] = $GLOBALS['companyID'];
         $_SESSION['companyName'] = $GLOBALS['companyName'];
-        $handler->RedirectToURL("success");
+        $handler->RedirectToURL("success.php");
    }
 }
 

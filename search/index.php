@@ -1,5 +1,5 @@
 <?PHP
-require_once("/../util/config.php");
+require_once("../util/config.php");
 $search_results = null;
 if(isset($_POST['submitted']))
 {
@@ -82,7 +82,7 @@ if(isset($_POST['submitted']))
     </div>
     <div class='form-group col-md-3'>
       <br/>
-        <button type="submit" class="btn btn-success">Submit</button>
+        <button type="submit" class="btn btn-primary">Submit</button>
     </div>
     </fieldset>
     </form>  

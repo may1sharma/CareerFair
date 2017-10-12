@@ -1,5 +1,5 @@
 <?PHP
-require_once("/../util/config.php");
+require_once("../util/config.php");
 session_start();
     
 if(isset($_POST['submitted']))
@@ -13,7 +13,7 @@ if(isset($_POST['submitted']))
         $_SESSION['sDegree'] = $GLOBALS['sDegree'];
         $_SESSION['sIntl'] = $GLOBALS['sIntl'];
 
-        $handler->RedirectToURL("success");
+        $handler->RedirectToURL("success.php");
    }
 }
 

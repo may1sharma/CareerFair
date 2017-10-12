@@ -78,7 +78,7 @@
     <div class='col-md-5'>&nbsp;</div>
 
     <div class='form-group'>
-        <button type="submit" class="btn btn-default">Submit</button>
+        <button type="submit" class="btn btn-primary">Submit</button>
     </div>
 
     </fieldset>
